@@ -7,9 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Database\Seeders\" />
-      <Folder Include="Endpoints\" />
-      <Folder Include="Managers\" />
+      <Folder Include="Api\" />
     </ItemGroup>
 
 </Project>
