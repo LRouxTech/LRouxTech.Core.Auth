@@ -1,3 +1,5 @@
+namespace LRouxTech.Core.Auth.Core.Entities;
+
 public class UserToken
 {
     public Guid UserId { get; set; }

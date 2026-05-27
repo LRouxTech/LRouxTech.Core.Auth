@@ -1,5 +1,8 @@
+using LRouxTech.Core.Auth.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace LRouxTech.Core.Auth.Infrastructure.Database.Configurations;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
@@ -9,13 +12,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(u => u.Id);
 
-        builder.Property(u => u.Username)
-          .IsRequired()
-          .HasMaxLength(50);
+        builder.Property(u => u.UserName)
+            .IsRequired()
+            .HasMaxLength(50);
 
         builder.Property(u => u.Name)
-          .IsRequired()
-          .HasMaxLength(50);
+            .IsRequired()
+            .HasMaxLength(50);
         
         builder.Property(u => u.Surname)
             .HasMaxLength(50);

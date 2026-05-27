@@ -1,3 +1,7 @@
+using LRouxTech.Core.BaseModel;
+
+namespace LRouxTech.Core.Auth.Core.Entities;
+
 public class Permission : BaseModel<Permission>
 {
     public string Section { get; set; }

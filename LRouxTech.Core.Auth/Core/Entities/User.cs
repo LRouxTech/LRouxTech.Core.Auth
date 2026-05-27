@@ -1,4 +1,6 @@
-﻿namespace LRouxTech.Core.Auth.Models;
+﻿using LRouxTech.Core.BaseModel;
+
+namespace LRouxTech.Core.Auth.Core.Entities;
 
 public class User : BaseModel<User>
 {
@@ -6,4 +8,5 @@ public class User : BaseModel<User>
     public string? Surname { get; set; }
     public required string UserName { get; set; }
     public required string Email { get; set; }
+    public string PasswordHash { get; set; }
 }
