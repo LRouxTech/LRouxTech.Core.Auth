@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Database.Configurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public static class UserConfiguration
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public static EntityTypeBuilder<User> ConfigureUser(this EntityTypeBuilder<User> builder)
     {
         builder.ToTable("Users");
 
@@ -32,5 +32,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.Email)
             .IsUnique();
+
+        return builder;
     }
 }

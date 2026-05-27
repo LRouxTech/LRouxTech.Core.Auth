@@ -8,5 +8,5 @@ public class User : BaseModel<User>
     public string? Surname { get; set; }
     public required string UserName { get; set; }
     public required string Email { get; set; }
-    public string PasswordHash { get; set; }
+    public byte[] PasswordHash { get; set; }
 }
