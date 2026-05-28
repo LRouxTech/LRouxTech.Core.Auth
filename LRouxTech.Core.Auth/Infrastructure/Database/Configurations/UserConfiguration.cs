@@ -1,4 +1,5 @@
 using LRouxTech.Core.Auth.Core.Entities;
+using LRouxTech.Core.BaseModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,8 +10,7 @@ public static class UserConfiguration
     public static EntityTypeBuilder<User> ConfigureUser(this EntityTypeBuilder<User> builder)
     {
         builder.ToTable("Users");
-
-        builder.HasKey(u => u.Id);
+        builder.ConfigureBaseModel();
 
         builder.Property(u => u.UserName)
             .IsRequired()
@@ -32,6 +32,21 @@ public static class UserConfiguration
 
         builder.HasIndex(u => u.Email)
             .IsUnique();
+        
+        builder.HasMany<UserPermission>(x => x.UserPermissions)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
+        
+        builder.HasMany<UserRole>(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
+        
+        builder.HasMany<UserToken>(x => x.UserTokens)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
 
         return builder;
     }

@@ -3,6 +3,7 @@ using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Database.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 
@@ -89,12 +90,21 @@ public class UserContext : DbContext
                 x.MigrationsAssembly("LRouxTech.Core.Auth");
             });
         }
+        
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        optionsBuilder.ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Permission>().ConfigurePermission();
+        modelBuilder.Entity<Role>().ConfigureRole();
+        modelBuilder.Entity<RolePermission>().ConfigureRolePermission();
         modelBuilder.Entity<User>().ConfigureUser();
+        modelBuilder.Entity<UserPermission>().ConfigureUserPermission();
+        modelBuilder.Entity<UserRole>().ConfigureUserRole();
+        modelBuilder.Entity<UserToken>().ConfigureUserToken();
     }
 }

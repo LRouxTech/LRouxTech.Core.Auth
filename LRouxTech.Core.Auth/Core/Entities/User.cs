@@ -9,4 +9,7 @@ public class User : BaseModel<User>
     public required string UserName { get; set; }
     public required string Email { get; set; }
     public byte[] PasswordHash { get; set; }
+    public ICollection<UserRole> UserRoles { get; set; }
+    public ICollection<UserPermission> UserPermissions { get; set; }
+    public ICollection<UserToken> UserTokens { get; set; }
 }
