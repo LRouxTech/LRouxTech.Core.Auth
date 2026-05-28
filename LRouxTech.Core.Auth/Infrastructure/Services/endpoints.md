@@ -7,8 +7,10 @@ Update
 Authenticate
 GetList
 Get/{id}
+
 InitialUpdatePassword
 UpdatePassword
+ResetPassword
 Archive
 Delete
 

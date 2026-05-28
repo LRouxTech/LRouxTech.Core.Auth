@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
+using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
 namespace LRouxTech.Core.Auth.Api.Endpoints;
 

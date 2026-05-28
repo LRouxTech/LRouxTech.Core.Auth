@@ -1,9 +1,8 @@
-namespace LRouxTech.Core.Auth.Core.ViewModels.User;
+namespace LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
 public record CreateUserRequest(
     string Username,
     string Email,
-    string Password,
-    Guid RoleId,
+    List<Guid> RoleIds,
     List<Guid> PermissionIds
 );

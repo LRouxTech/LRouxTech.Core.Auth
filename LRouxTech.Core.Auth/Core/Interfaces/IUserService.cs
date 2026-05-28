@@ -1,5 +1,6 @@
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
+using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
 namespace LRouxTech.Core.Auth.Core.Interfaces;
 
