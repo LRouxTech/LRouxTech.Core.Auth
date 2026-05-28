@@ -1,6 +1,7 @@
 Endpoints for User: 
 
 Login
+Logout
 Create
 Update
 Authenticate
