@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.Auth", "LRouxTech.Core.Auth\LRouxTech.Core.Auth.csproj", "{502451A0-45D9-4CDF-BB0D-950377D28002}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.AuthTests", "LRouxTech.Core.AuthTests\LRouxTech.Core.AuthTests.csproj", "{9EC6D9D4-2066-403D-8C3B-F974383790CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.AuthSample", "LRouxTech.Core.AuthSample\LRouxTech.Core.AuthSample.csproj", "{25459E63-8F63-482A-8C5A-484D8F405960}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{502451A0-45D9-4CDF-BB0D-950377D28002}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{502451A0-45D9-4CDF-BB0D-950377D28002}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{502451A0-45D9-4CDF-BB0D-950377D28002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EC6D9D4-2066-403D-8C3B-F974383790CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EC6D9D4-2066-403D-8C3B-F974383790CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EC6D9D4-2066-403D-8C3B-F974383790CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EC6D9D4-2066-403D-8C3B-F974383790CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25459E63-8F63-482A-8C5A-484D8F405960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25459E63-8F63-482A-8C5A-484D8F405960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25459E63-8F63-482A-8C5A-484D8F405960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25459E63-8F63-482A-8C5A-484D8F405960}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
