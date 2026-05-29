@@ -10,7 +10,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Validator;
 
 public class UserValidator : IUserValidator
 {
-    public Result ValidateUserCreation(CreateUserRequest model)
+    public Result<bool> ValidateUserCreation(CreateUserRequest model)
     {
         if (string.IsNullOrWhiteSpace(model.Username))
         {
@@ -27,10 +27,10 @@ public class UserValidator : IUserValidator
             return RoleErrors.NoRole;
         }
 
-        return Result.Success();
+        return true;
     }
 
-    public Result ValidateUserUpdate(UpdateUserRequest model)
+    public Result<bool> ValidateUserUpdate(UpdateUserRequest model)
     {
         if (model.UserId == Guid.Empty)
         {
@@ -52,10 +52,10 @@ public class UserValidator : IUserValidator
             return RoleErrors.NoRole;
         }
 
-        return Result.Success();
+        return true;
     }
 
-    public Result ValidateUserPasswordCreation(PasswordCreationRequest model)
+    public Result<bool> ValidateUserPasswordCreation(PasswordCreationRequest model)
     {
         if (string.IsNullOrWhiteSpace(model.token))
         {
@@ -97,10 +97,10 @@ public class UserValidator : IUserValidator
             return PasswordErrors.NoNumber;
         }
 
-        return Result.Success();
+        return true;
     }
 
-    public Result ValidateUserPasswordUpdate(UpdatePasswordRequest model)
+    public Result<bool> ValidateUserPasswordUpdate(UpdatePasswordRequest model)
     {
         if (string.IsNullOrWhiteSpace(model.token))
         {
@@ -142,6 +142,6 @@ public class UserValidator : IUserValidator
             return PasswordErrors.NoNumber;
         }
 
-        return Result.Success();
+        return true;
     }
 }

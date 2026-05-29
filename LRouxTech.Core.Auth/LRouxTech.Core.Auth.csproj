@@ -22,7 +22,7 @@
 
     <ItemGroup>
       <PackageReference Include="LRouxTech.Core.BaseModel" Version="0.3.0" />
-      <PackageReference Include="LRouxTech.Core.ValidationResult" Version="0.1.0" />
+      <PackageReference Include="LRouxTech.Core.ValidationResult" Version="0.2.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
         <PrivateAssets>all</PrivateAssets>

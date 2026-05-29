@@ -5,8 +5,8 @@ namespace LRouxTech.Core.Auth.Core.Interfaces;
 
 public interface IUserValidator
 {
-   Result ValidateUserCreation(CreateUserRequest model);
-   Result ValidateUserUpdate(UpdateUserRequest model);
-   Result ValidateUserPasswordCreation(PasswordCreationRequest model);
-   Result ValidateUserPasswordUpdate(UpdatePasswordRequest model);
+   Result<bool> ValidateUserCreation(CreateUserRequest model);
+   Result<bool> ValidateUserUpdate(UpdateUserRequest model);
+   Result<bool> ValidateUserPasswordCreation(PasswordCreationRequest model);
+   Result<bool> ValidateUserPasswordUpdate(UpdatePasswordRequest model);
 }
