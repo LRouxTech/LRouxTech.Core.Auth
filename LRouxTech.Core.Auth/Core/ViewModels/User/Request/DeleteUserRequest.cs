@@ -2,5 +2,5 @@
 
 public class DeleteUserRequest
 {
-    
+    Guid userId;
 }

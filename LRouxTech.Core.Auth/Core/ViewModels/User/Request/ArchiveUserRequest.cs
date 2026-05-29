@@ -1,3 +1,3 @@
 ﻿namespace LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
-public record ArchiveUserRequest;
+public record ArchiveUserRequest(Guid userId);

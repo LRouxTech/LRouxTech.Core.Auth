@@ -1,3 +1,3 @@
 ﻿namespace LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
-public record ResetPasswordRequest;
+public record ResetPasswordRequest(string email);
