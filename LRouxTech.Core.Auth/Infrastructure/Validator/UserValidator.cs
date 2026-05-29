@@ -72,11 +72,15 @@ public class UserValidator : IUserValidator
             return PasswordErrors.EmptyConfirmPassword;
         }
 
+        if(!string.Equals(model.password,model.passwordConfirmation, StringComparison.CurrentCulture))
+        {
+            return PasswordErrors.PasswordsdontMatch;
+        }
+
         if (model.password.Length < 8)
         {
             return PasswordErrors.TooShort;
         }
-
 
         if (!model.password.Any(char.IsUpper))
         {
@@ -98,6 +102,46 @@ public class UserValidator : IUserValidator
 
     public Result ValidateUserPasswordUpdate(UpdatePasswordRequest model)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(model.token))
+        {
+            return TokenErrors.EmptyToken;
+        }
+        
+        if (string.IsNullOrWhiteSpace(model.newPassword))
+        {
+            return PasswordErrors.EmptyPassword;
+        }
+        
+        if (string.IsNullOrWhiteSpace(model.newPasswordConfirm))
+        {
+            return PasswordErrors.EmptyConfirmPassword;
+        }
+
+        if(!string.Equals(model.newPassword,model.newPasswordConfirm, StringComparison.CurrentCulture))
+        {
+            return PasswordErrors.PasswordsdontMatch;
+        }
+
+        if (model.newPassword.Length < 8)
+        {
+            return PasswordErrors.TooShort;
+        }
+
+        if (!model.newPassword.Any(char.IsUpper))
+        {
+            return PasswordErrors.NoUppercase;
+        }
+
+        if (!model.newPassword.Any(char.IsLower))
+        {
+            return PasswordErrors.NoLowercase;
+        }
+
+        if (!model.newPassword.Any(char.IsNumber))
+        {
+            return PasswordErrors.NoNumber;
+        }
+
+        return Result.Success();
     }
 }
