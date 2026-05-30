@@ -102,4 +102,34 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
         
         return userToken;
     }
+
+    public async Task<Result<bool>> InvalidateToken(string token)
+    {
+        var userToken = await userContext.UserTokens.FirstOrDefaultAsync(x => x.TokenValue == token);
+        if (userToken == null)
+        {
+            return true;
+        }
+        userToken.Expired = true;
+        userContext.UserTokens.Update(userToken);
+        await userContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<Result<bool>> InvalidateAllTokens(Guid userId)
+    {
+        var userToken = await userContext.UserTokens.Where(x => x.UserId == userId).ToListAsync();
+        if (userToken is null or [])
+        {
+            return true;
+        }
+
+        foreach (var token in userToken)
+        {
+            token.Expired = true;
+            userContext.UserTokens.Update(token);
+        }
+        await userContext.SaveChangesAsync();
+        return true;
+    }
 }

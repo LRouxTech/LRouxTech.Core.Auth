@@ -1,6 +1,3 @@
 ﻿namespace LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 
-public class DeleteUserRequest
-{
-    Guid userId;
-}
+public record DeleteUserRequest( Guid userId);

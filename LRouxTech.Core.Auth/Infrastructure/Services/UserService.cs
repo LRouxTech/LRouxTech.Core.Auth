@@ -99,95 +99,218 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         {
             return validationResult.Error;
         }
-        
-        var user = await userContext.Users.Include(x => x.UserPermissions).Include(x => x.UserRoles).FirstOrDefaultAsync(x => x.Id == request.UserId);
+
+        var user = await userContext.Users.Include(x => x.UserPermissions).Include(x => x.UserRoles)
+            .FirstOrDefaultAsync(x => x.Id == request.UserId);
         if (user == null)
         {
             return UserErrors.UserNotFound;
         }
+
         user.Name = request.Name;
         user.Email = request.Email;
         user.UserName = request.Username;
-        
-        var rolesToRemove = user.UserRoles
-            .Where(ur => !request.RoleIds.Contains(ur.RoleId))
-            .ToList();
-
+        var rolesToRemove = user.UserRoles.Where(ur => !request.RoleIds.Contains(ur.RoleId)).ToList();
         foreach (var role in rolesToRemove)
         {
             user.UserRoles.Remove(role);
         }
 
         var existingRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToHashSet();
-        var rolesToAdd = request.RoleIds
-            .Where(id => !existingRoleIds.Contains(id))
+        var rolesToAdd = request.RoleIds.Where(id => !existingRoleIds.Contains(id))
             .Select(id => new UserRole { UserId = user.Id, RoleId = id });
-
         foreach (var newRole in rolesToAdd)
         {
             user.UserRoles.Add(newRole);
         }
-        
-        var permissionsToRemove = user.UserPermissions
-            .Where(up => !request.PermissionIds.Contains(up.PermissionId))
-            .ToList();
 
+        var permissionsToRemove = user.UserPermissions
+            .Where(up => !request.PermissionIds.Contains(up.PermissionId)).ToList();
         foreach (var permission in permissionsToRemove)
         {
             user.UserPermissions.Remove(permission);
         }
 
         var existingPermissionIds = user.UserPermissions.Select(up => up.PermissionId).ToHashSet();
-        var permissionsToAdd = request.PermissionIds
-            .Where(id => !existingPermissionIds.Contains(id))
+        var permissionsToAdd = request.PermissionIds.Where(id => !existingPermissionIds.Contains(id))
             .Select(id => new UserPermission { UserId = user.Id, PermissionId = id });
-
         foreach (var newPermission in permissionsToAdd)
         {
             user.UserPermissions.Add(newPermission);
         }
+
         userContext.Users.Update(user);
         await userContext.SaveChangesAsync();
         return user;
     }
 
-    public Task<Result<SignedInUserResponse>> Authenticate(AuthenticateUserRequest request)
+    public async Task<Result<SignedInUserResponse>> Authenticate(AuthenticateUserRequest request)
     {
-        throw new NotImplementedException();
+        var tokenResponse = await tokenService.ValidateToken(request.token);
+        if (tokenResponse.IsFailure)
+        {
+            return tokenResponse.Error;
+        }
+
+        var token = tokenResponse.Value;
+        var permissions = await userContext.UserPermissions.Where(x => x.UserId == token.UserId)
+            .Select(x => x.PermissionId).ToListAsync();
+        var roles = await userContext.UserPermissions.Where(x => x.UserId == token.UserId).Select(x => x.PermissionId)
+            .ToListAsync();
+        return new SignedInUserResponse(token.UserId, token.User.UserName, token.User.Email, token.TokenValue,
+            token.ExpiresOn, roles, permissions);
     }
 
-    public Task<Result<UserListResponse>> GetUserList(UserListRequest request)
+    public async Task<Result<UserListResponse>> GetUserList(UserListRequest request)
     {
-        throw new NotImplementedException();
+        var user = await userContext.Users.Include(x => x.UserRoles).Skip((request.page - 1) * request.rows)
+            .Where(x => request.activeUsers ? x.ArchivedOn == null : x.ArchivedOn != null)
+            .Select(x => new ListUser(x.Id, x.Name, x.Email, x.UserRoles.Select(y => y.Role.Name).ToList()))
+            .Take(request.rows).ToListAsync();
+        return new UserListResponse(user, request.rows, request.page);
     }
 
-    public Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
+    public async Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
     {
-        throw new NotImplementedException();
+        var user = await userContext.Users.Select(x => new UserDetailResponse(x.Id, x.UserName, x.Email,
+            x.UserRoles.Select(y => y.RoleId).ToList(), x.UserPermissions.Select(y => y.PermissionId).ToList()))
+            .FirstOrDefaultAsync(x => x.UserId == request.UserId);
+
+        if (user == null)
+        {
+            return UserErrors.UserNotFound;
+        }
+
+        return user;
     }
 
-    public Task<Result<bool>> InitialPasswordSet(PasswordCreationRequest request)
+    public async Task<Result<bool>> InitialPasswordSet(PasswordCreationRequest request)
     {
-        throw new NotImplementedException();
+        var validationResult = userValidator.ValidateUserPasswordCreation(request);
+        if (validationResult.IsFailure)
+        {
+            return validationResult.Error;
+        }
+        
+        var tokenResponse = await tokenService.ValidateToken(request.token);
+        if (tokenResponse.IsFailure)
+        {
+            return tokenResponse.Error;
+        }
+
+        var user = tokenResponse.Value.User;
+        user.PasswordHash = PasswordHasher.HashPassword(request.password);
+        userContext.Users.Update(user);
+        await userContext.SaveChangesAsync();
+        
+        var invalidateResponse = await tokenService.InvalidateToken(request.token);
+        if (invalidateResponse.IsFailure)
+        {
+            return invalidateResponse.Error;
+        }
+
+        return true;
     }
 
-    public Task<Result<bool>> UpdatePassword(UpdatePasswordRequest request)
+    public async Task<Result<bool>> UpdatePassword(UpdatePasswordRequest request)
     {
-        throw new NotImplementedException();
+        var validationResult = userValidator.ValidateUserPasswordUpdate(request);
+        if (validationResult.IsFailure)
+        {
+            return validationResult.Error;
+        }
+        
+        var tokenResponse = await tokenService.ValidateToken(request.token);
+        if (tokenResponse.IsFailure)
+        {
+            return tokenResponse.Error;
+        }
+
+        var user = tokenResponse.Value.User;
+        user.PasswordHash = PasswordHasher.HashPassword(request.newPassword);
+        userContext.Users.Update(user);
+        await userContext.SaveChangesAsync();
+        
+        var invalidateResponse = await tokenService.InvalidateToken(request.token);
+        if (invalidateResponse.IsFailure)
+        {
+            return invalidateResponse.Error;
+        }
+
+        return true;
     }
 
-    public Task<Result<bool>> ResetPassword(ResetPasswordRequest request)
+    public async Task<Result<bool>> ResetPassword(ResetPasswordRequest request)
     {
-        throw new NotImplementedException();
+        var user = await userContext.Users.FirstOrDefaultAsync(x => x.Email == request.email);
+        
+        if (user == null)
+        {
+            return UserErrors.UserNotFound;
+        }
+        
+        var invalidateAllTokens = await tokenService.InvalidateAllTokens(user.Id);
+        if (invalidateAllTokens.IsFailure)
+        {
+            return invalidateAllTokens.Error;
+        }
+        
+        var newToken = await tokenService.GenerateToken(user.Id);
+        if (newToken.IsFailure)
+        {
+            return newToken.Error;
+        }
+        
+        
+        
+        // TODO: Send Email to user with password reset link.
+
+        return true;
     }
 
-    public Task<Result<bool>> ArchiveUser(ArchiveUserRequest request)
+    public async Task<Result<bool>> ArchiveUser(ArchiveUserRequest request, User requester)
     {
-        throw new NotImplementedException();
+        var user = await userContext.Users.FirstOrDefaultAsync(x => x.Id == request.userId);
+        
+        if (user is null)
+        {
+            return UserErrors.UserNotFound;
+        }
+        
+        var invalidateAllTokens = await tokenService.InvalidateAllTokens(user.Id);
+        if (invalidateAllTokens.IsFailure)
+        {
+            return invalidateAllTokens.Error;
+        }
+        
+        user.ArchivedOn = DateTime.UtcNow;
+        user.ArchivedById = requester.Id;
+        userContext.Users.Update(user);
+        await userContext.SaveChangesAsync();
+
+        return true;
     }
 
-    public Task<Result<bool>> DeleteUser(DeleteUserRequest request)
+    public async Task<Result<bool>> DeleteUser(DeleteUserRequest request)
     {
-        throw new NotImplementedException();
+        var user = await userContext.Users
+            .Where(x => x.ArchivedOn != null)
+            .FirstOrDefaultAsync(x => x.Id == request.userId);
+        
+        if (user is null)
+        {
+            return UserErrors.UserNotFound;
+        }
+        
+        var invalidateAllTokens = await tokenService.InvalidateAllTokens(user.Id);
+        if (invalidateAllTokens.IsFailure)
+        {
+            return invalidateAllTokens.Error;
+        }
+        
+        userContext.Users.Remove(user);
+        await userContext.SaveChangesAsync();
+
+        return true;
     }
 }

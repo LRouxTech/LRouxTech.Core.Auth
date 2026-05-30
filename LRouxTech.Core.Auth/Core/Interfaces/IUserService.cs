@@ -18,6 +18,6 @@ public interface IUserService
     Task<Result<bool>> InitialPasswordSet(PasswordCreationRequest request);
     Task<Result<bool>> UpdatePassword(UpdatePasswordRequest request);
     Task<Result<bool>> ResetPassword(ResetPasswordRequest request);
-    Task<Result<bool>> ArchiveUser(ArchiveUserRequest request);
+    Task<Result<bool>> ArchiveUser(ArchiveUserRequest request, User requester);
     Task<Result<bool>> DeleteUser(DeleteUserRequest request);
 }
