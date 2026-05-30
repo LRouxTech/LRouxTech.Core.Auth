@@ -23,6 +23,7 @@
     <ItemGroup>
       <PackageReference Include="LRouxTech.Core.BaseModel" Version="0.3.0" />
       <PackageReference Include="LRouxTech.Core.ValidationResult" Version="0.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
         <PrivateAssets>all</PrivateAssets>
@@ -33,6 +34,7 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.8" />
       <PackageReference Include="Npgsql" Version="10.0.3" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
     </ItemGroup>
 
 </Project>

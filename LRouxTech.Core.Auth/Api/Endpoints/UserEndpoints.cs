@@ -26,7 +26,7 @@ public static class UserEndpoints
             {
                 var user = await userService.Create(request);
                 // Returns 201 Created. Adjust the location URI as needed for your architecture.
-                return Results.Created($"{prefix}/{user.Id}", user);
+                return Results.Created($"{prefix}/{user.Value.Id}", user);
             })
             .WithName("CreateUser");
 
