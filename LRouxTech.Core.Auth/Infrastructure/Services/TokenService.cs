@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class TokenService(UserContext context, IConfiguration configuration) : ITokenService
+public class TokenService(UserContext userContext, IConfiguration configuration) : ITokenService
 {
     public async Task<Result<UserToken>> GenerateToken(Guid UserId)
     {
@@ -25,7 +25,7 @@ public class TokenService(UserContext context, IConfiguration configuration) : I
             return SettingsErrors.SettingsNotFound;
         }
         
-        var user = await context.Users
+        var user = await userContext.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == UserId);
@@ -62,15 +62,15 @@ public class TokenService(UserContext context, IConfiguration configuration) : I
             UserId = user.Id,
         };
         
-        context.UserTokens.Add(userToken);
-        await context.SaveChangesAsync();
+        userContext.UserTokens.Add(userToken);
+        await userContext.SaveChangesAsync();
         
         return userToken;
     }
 
     public async Task<Result<UserToken>> GetToken(Guid UserId)
     {
-        var token = await context.UserTokens.FirstOrDefaultAsync(x => x.UserId == UserId);
+        var token = await userContext.UserTokens.FirstOrDefaultAsync(x => x.UserId == UserId);
 
         if (token == null)
         {
@@ -82,7 +82,7 @@ public class TokenService(UserContext context, IConfiguration configuration) : I
 
     public async Task<Result<UserToken>> ValidateToken(string token)
     {
-        var userToken = await context.UserTokens
+        var userToken = await userContext.UserTokens
             .Include(x => x.User)
             .Where(x => !x.Expired)
             .FirstOrDefaultAsync(x => x.TokenValue == token);
@@ -95,8 +95,8 @@ public class TokenService(UserContext context, IConfiguration configuration) : I
         if (userToken.ExpiresOn <= DateTime.Now)
         {
             userToken.Expired = true;
-            context.UserTokens.Update(userToken);
-            await context.SaveChangesAsync();
+            userContext.UserTokens.Update(userToken);
+            await userContext.SaveChangesAsync();
             return TokenErrors.TokenExpired;
         }
         
