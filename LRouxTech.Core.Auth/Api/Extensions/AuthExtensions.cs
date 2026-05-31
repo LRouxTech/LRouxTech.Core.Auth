@@ -10,6 +10,10 @@ public static class AuthExtensions
     {
         services.AddJwtAuth();
         services.AddUserModule();
+        services.AddRoleModule();
+        services.AddPermissionModule();
+        services.AddHttpContextModule();
+        services.AddValidatorModule();
         services.AddUserContext();
         return services;
     }

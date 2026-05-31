@@ -9,7 +9,7 @@ namespace LRouxTech.Core.Auth.Api.Endpoints;
 
 public static class RoleEndpoints
 {
-    public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder endpoints, string prefix = "/api/role")
+    public static IEndpointRouteBuilder MapRoleEndpoints(this IEndpointRouteBuilder endpoints, string prefix = "/api/role")
     {
         var group = endpoints.MapGroup(prefix);
 
