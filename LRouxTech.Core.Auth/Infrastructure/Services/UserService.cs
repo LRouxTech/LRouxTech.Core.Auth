@@ -6,13 +6,15 @@ using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
 using LRouxTech.Core.Auth.Infrastructure.Helper;
+using LRouxTech.Core.Auth.Infrastructure.Templates;
 using LRouxTech.Core.Auth.Infrastructure.Validator;
+using LRouxTech.Core.Mail;
 using LRouxTech.Core.ValidationResult;
 using Microsoft.EntityFrameworkCore;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class UserService(UserContext userContext, ITokenService tokenService, IUserValidator userValidator)
+public class UserService(UserContext userContext, ITokenService tokenService, IUserValidator userValidator, IEmailService emailService)
     : IUserService
 {
     public async Task<Result<SignedInUserResponse>> Login(UserLoginRequest request)
@@ -89,6 +91,16 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         };
         userContext.Users.Add(user);
         await userContext.SaveChangesAsync();
+        
+                
+        string htmlTemplate = LoadTemplate.LoadEmbeddedTemplate("WelcomeMail.html");
+
+        string localizedBody = htmlTemplate
+            .Replace("{ResetLink}", "https://yourdomain.co.za/auth/reset-password?token=xyz123");
+
+        await emailService.SendEmailAsync(user.Email, "Reset Your Password", localizedBody);
+
+        
         return user;
     }
 
@@ -261,14 +273,17 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             return newToken.Error;
         }
         
-        
-        
-        // TODO: Send Email to user with password reset link.
+        string htmlTemplate = LoadTemplate.LoadEmbeddedTemplate("PasswordReset.html");
 
+        string localizedBody = htmlTemplate
+            .Replace("{ResetLink}", "https://yourdomain.co.za/auth/reset-password?token=xyz123");
+
+        await emailService.SendEmailAsync(user.Email, "Reset Your Password", localizedBody);
+        
         return true;
     }
 
-    public async Task<Result<bool>> ArchiveUser(ArchiveUserRequest request, User requester)
+    public async Task<Result<bool>> ArchiveUser(ArchiveUserRequest request, Guid requester)
     {
         var user = await userContext.Users.FirstOrDefaultAsync(x => x.Id == request.userId);
         
@@ -284,7 +299,7 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         }
         
         user.ArchivedOn = DateTime.UtcNow;
-        user.ArchivedById = requester.Id;
+        user.ArchivedById = requester;
         userContext.Users.Update(user);
         await userContext.SaveChangesAsync();
 

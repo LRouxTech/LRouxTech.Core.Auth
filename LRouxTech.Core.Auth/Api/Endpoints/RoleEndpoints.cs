@@ -1,0 +1,31 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using LRouxTech.Core.Auth.Core.Interfaces;
+using LRouxTech.Core.Auth.Core.ViewModels.User;
+using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
+
+namespace LRouxTech.Core.Auth.Api.Endpoints;
+
+public static class RoleEndpoints
+{
+    public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder endpoints, string prefix = "/api/role")
+    {
+        var group = endpoints.MapGroup(prefix);
+
+        group.MapGet("/", async (IRoleService roleService) =>
+            {
+                var result = await roleService.GetList();
+                if (result.IsFailure)
+                {
+                    Results.BadRequest(result.Error);
+                }
+
+                return Results.Ok(result.Value);
+
+            })
+            .WithName("GetRoles");
+
+        return endpoints;
+    }
+}
