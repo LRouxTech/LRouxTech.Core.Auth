@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class PermissionService(UserContext userContext) : IPermissionService
+public class PermissionService(IUserDbContextFactory dbContextFactory) : IPermissionService
 {
     public async Task<Result<PermissionListResponse>> GetList()
     {
-        var permissions = await userContext.Permissions
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var permissions = await dbContext.Permissions
             .Select(x => new PermissionItem(x.Id, x.Section, x.PermissionName))
             .ToListAsync();
 

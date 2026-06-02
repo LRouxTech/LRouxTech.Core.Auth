@@ -19,7 +19,7 @@ public static class RoleEndpoints
                 var result = await roleService.GetList();
                 if (result.IsFailure)
                 {
-                    Results.BadRequest(result.Error);
+                    return Results.BadRequest(result.Error);
                 }
 
                 return Results.Ok(result.Value);

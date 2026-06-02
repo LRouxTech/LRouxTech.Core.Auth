@@ -17,7 +17,7 @@ public static class PermissionEndpoints
                 var result = await permissionService.GetList();
                 if (result.IsFailure)
                 {
-                    Results.BadRequest(result.Error);
+                    return Results.BadRequest(result.Error);
                 }
 
                 return Results.Ok(result.Value);

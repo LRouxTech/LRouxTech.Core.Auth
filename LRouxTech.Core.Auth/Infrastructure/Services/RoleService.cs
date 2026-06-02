@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class RoleService(UserContext userContext):IRoleService
+public class RoleService(IUserDbContextFactory dbContextFactory):IRoleService
 {
     public async Task<Result<RoleListResponse>> GetList()
     {
-        var roles = await userContext.Roles
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var roles = await dbContext.Roles
             .Include(x => x.RolePermissions)
             .Select(x => new RoleItem(
                 x.Id,

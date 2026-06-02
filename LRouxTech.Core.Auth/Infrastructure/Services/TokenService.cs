@@ -12,10 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class TokenService(UserContext userContext, IConfiguration configuration) : ITokenService
+public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration configuration) : ITokenService
 {
     public async Task<Result<UserToken>> GenerateToken(Guid UserId)
     {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         string secretKey = configuration["JwtSettings:SecretKey"];
         string issuer = configuration["JwtSettings:Issuer"];
         string audience = configuration["JwtSettings:Audience"];
@@ -25,7 +26,7 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
             return SettingsErrors.SettingsNotFound;
         }
         
-        var user = await userContext.Users
+        var user = await dbContext.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == UserId);
@@ -62,15 +63,16 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
             UserId = user.Id,
         };
         
-        userContext.UserTokens.Add(userToken);
-        await userContext.SaveChangesAsync();
+        dbContext.UserTokens.Add(userToken);
+        await dbContext.SaveChangesAsync();
         
         return userToken;
     }
 
     public async Task<Result<UserToken>> GetToken(Guid UserId)
     {
-        var token = await userContext.UserTokens.FirstOrDefaultAsync(x => x.UserId == UserId);
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var token = await dbContext.UserTokens.FirstOrDefaultAsync(x => x.UserId == UserId);
 
         if (token == null)
         {
@@ -82,7 +84,8 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
 
     public async Task<Result<UserToken>> ValidateToken(string token)
     {
-        var userToken = await userContext.UserTokens
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var userToken = await dbContext.UserTokens
             .Include(x => x.User)
             .Where(x => !x.Expired)
             .FirstOrDefaultAsync(x => x.TokenValue == token);
@@ -95,8 +98,8 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
         if (userToken.ExpiresOn <= DateTime.Now)
         {
             userToken.Expired = true;
-            userContext.UserTokens.Update(userToken);
-            await userContext.SaveChangesAsync();
+            dbContext.UserTokens.Update(userToken);
+            await dbContext.SaveChangesAsync();
             return TokenErrors.TokenExpired;
         }
         
@@ -105,20 +108,22 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
 
     public async Task<Result<bool>> InvalidateToken(string token)
     {
-        var userToken = await userContext.UserTokens.FirstOrDefaultAsync(x => x.TokenValue == token);
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var userToken = await dbContext.UserTokens.FirstOrDefaultAsync(x => x.TokenValue == token);
         if (userToken == null)
         {
             return true;
         }
         userToken.Expired = true;
-        userContext.UserTokens.Update(userToken);
-        await userContext.SaveChangesAsync();
+        dbContext.UserTokens.Update(userToken);
+        await dbContext.SaveChangesAsync();
         return true;
     }
 
     public async Task<Result<bool>> InvalidateAllTokens(Guid userId)
     {
-        var userToken = await userContext.UserTokens.Where(x => x.UserId == userId).ToListAsync();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var userToken = await dbContext.UserTokens.Where(x => x.UserId == userId).ToListAsync();
         if (userToken is null or [])
         {
             return true;
@@ -127,9 +132,9 @@ public class TokenService(UserContext userContext, IConfiguration configuration)
         foreach (var token in userToken)
         {
             token.Expired = true;
-            userContext.UserTokens.Update(token);
+            dbContext.UserTokens.Update(token);
         }
-        await userContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         return true;
     }
 }

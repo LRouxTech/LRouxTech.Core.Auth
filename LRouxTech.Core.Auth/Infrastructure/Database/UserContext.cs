@@ -13,42 +13,24 @@ public interface IUserDbContextFactory :  IDbContextFactory<UserContext>
 {
 }
 
-public class UserDbContextFactory : IDesignTimeDbContextFactory<UserContext>, IUserDbContextFactory
+public class UserDbContextFactory :  IUserDbContextFactory
 {
+    public DbContextOptions<UserContext> options => _options;
+    private readonly DbContextOptions<UserContext> _options;
+
+    public UserDbContextFactory(DbContextOptions<UserContext> options = null)
+    {
+        _options = options;
+    }
+        
     public UserContext CreateDbContext()
     {
-        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
-        var builder = new ConfigurationBuilder().AddJsonFile($"appsettings.json", false, true)
-            .AddEnvironmentVariables();
-        var configuration = builder.Build();
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), x =>
-            {
-                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "Auth");
-                x.MigrationsAssembly("LRouxTech.Core.Auth");
-            });
-        }
-
-        return new UserContext(optionsBuilder.Options);
+        return new UserContext(_options);
     }
-
-    public UserContext CreateDbContext(string[] args)
+        
+    public async Task<UserContext> CreateDbContextAsync(CancellationToken cancellationToken = default)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
-        var builder = new ConfigurationBuilder().AddJsonFile($"appsettings.json", false, true)
-            .AddEnvironmentVariables();
-        var configuration = builder.Build();
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), x =>
-            {
-                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "Auth");
-                x.MigrationsAssembly("LRouxTech.Core.Auth");
-            });
-        }
-
-        return new UserContext(optionsBuilder.Options);
+        return new UserContext(_options);
     }
 }
 
@@ -56,35 +38,7 @@ public class UserContext : DbContext
 {
     public UserContext(DbContextOptions<UserContext> options) : base(options)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
-        var builder = new ConfigurationBuilder().AddJsonFile($"appsettings.json", false, true)
-            .AddEnvironmentVariables();
-        var configuration = builder.Build();
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), x =>
-            {
-                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
-                x.MigrationsAssembly("LRouxTech.Core.Auth");
-            });
-        }
-    }
-    
-    public UserContext()
-    {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-        
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
-        
-        optionsBuilder.UseNpgsql(connectionString, x =>
-        {
-            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
-            x.MigrationsAssembly("LRouxTech.Core.Auth");
-        });
+
     }
 
     public DbSet<User> Users { get; set; }

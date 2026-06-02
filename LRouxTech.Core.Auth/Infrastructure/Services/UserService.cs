@@ -14,12 +14,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class UserService(UserContext userContext, ITokenService tokenService, IUserValidator userValidator, IEmailService emailService)
+public class UserService(IUserDbContextFactory dbContextFactory, ITokenService tokenService, IUserValidator userValidator, IEmailService emailService)
     : IUserService
 {
     public async Task<Result<SignedInUserResponse>> Login(UserLoginRequest request)
     {
-        var user = await userContext.Users
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users
             .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.Now))
             .Include(x => x.UserPermissions).Include(x => x.UserRoles)
             .FirstOrDefaultAsync(x => x.UserName == request.UserName);
@@ -55,7 +56,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
 
     public async Task<Result<bool>> Logout(UserLogoutRequest request)
     {
-        var user = await userContext.Users
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users
             .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.Now))
             .FirstOrDefaultAsync(x => x.Id == request.UserId);
         if (user == null)
@@ -66,31 +68,36 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         foreach (var token in user.UserTokens)
         {
             token.Expired = true;
-            userContext.UserTokens.Update(token);
+            dbContext.UserTokens.Update(token);
         }
 
-        await userContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         return true;
     }
 
     public async Task<Result<User>> Create(CreateUserRequest request)
-    {
+    { 
         var validationResult = userValidator.ValidateUserCreation(request);
         if (validationResult.IsFailure)
         {
             return validationResult.Error;
         }
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        
+        var tempHash = new byte[32];
+        System.Security.Cryptography.RandomNumberGenerator.Fill(tempHash);
 
         var user = new User
         {
             Name = request.Name,
             Email = request.Email,
             UserName = request.Username,
+            PasswordHash = tempHash,
             UserRoles = request.RoleIds.Select(x => new UserRole { RoleId = x }).ToList(),
             UserPermissions = request.PermissionIds.Select(x => new UserPermission { PermissionId = x }).ToList(),
         };
-        userContext.Users.Add(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
         
                 
         string htmlTemplate = LoadTemplate.LoadEmbeddedTemplate("WelcomeMail.html");
@@ -111,8 +118,9 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         {
             return validationResult.Error;
         }
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        var user = await userContext.Users.Include(x => x.UserPermissions).Include(x => x.UserRoles)
+        var user = await dbContext.Users.Include(x => x.UserPermissions).Include(x => x.UserRoles)
             .FirstOrDefaultAsync(x => x.Id == request.UserId);
         if (user == null)
         {
@@ -151,8 +159,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             user.UserPermissions.Add(newPermission);
         }
 
-        userContext.Users.Update(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Update(user);
+        await dbContext.SaveChangesAsync();
         return user;
     }
 
@@ -164,10 +172,11 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             return tokenResponse.Error;
         }
 
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var token = tokenResponse.Value;
-        var permissions = await userContext.UserPermissions.Where(x => x.UserId == token.UserId)
+        var permissions = await dbContext.UserPermissions.Where(x => x.UserId == token.UserId)
             .Select(x => x.PermissionId).ToListAsync();
-        var roles = await userContext.UserPermissions.Where(x => x.UserId == token.UserId).Select(x => x.PermissionId)
+        var roles = await dbContext.UserPermissions.Where(x => x.UserId == token.UserId).Select(x => x.PermissionId)
             .ToListAsync();
         return new SignedInUserResponse(token.UserId, token.User.UserName, token.User.Email, token.TokenValue,
             token.ExpiresOn, roles, permissions);
@@ -175,7 +184,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
 
     public async Task<Result<UserListResponse>> GetUserList(UserListRequest request)
     {
-        var user = await userContext.Users.Include(x => x.UserRoles).Skip((request.page - 1) * request.rows)
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.Include(x => x.UserRoles).Skip((request.page - 1) * request.rows)
             .Where(x => request.activeUsers ? x.ArchivedOn == null : x.ArchivedOn != null)
             .Select(x => new ListUser(x.Id, x.Name, x.Email, x.UserRoles.Select(y => y.Role.Name).ToList()))
             .Take(request.rows).ToListAsync();
@@ -184,7 +194,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
 
     public async Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
     {
-        var user = await userContext.Users.Select(x => new UserDetailResponse(x.Id, x.UserName, x.Email,
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.Select(x => new UserDetailResponse(x.Id, x.UserName, x.Email,
             x.UserRoles.Select(y => y.RoleId).ToList(), x.UserPermissions.Select(y => y.PermissionId).ToList()))
             .FirstOrDefaultAsync(x => x.UserId == request.UserId);
 
@@ -210,10 +221,11 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             return tokenResponse.Error;
         }
 
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = tokenResponse.Value.User;
         user.PasswordHash = PasswordHasher.HashPassword(request.password);
-        userContext.Users.Update(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Update(user);
+        await dbContext.SaveChangesAsync();
         
         var invalidateResponse = await tokenService.InvalidateToken(request.token);
         if (invalidateResponse.IsFailure)
@@ -238,10 +250,11 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             return tokenResponse.Error;
         }
 
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = tokenResponse.Value.User;
         user.PasswordHash = PasswordHasher.HashPassword(request.newPassword);
-        userContext.Users.Update(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Update(user);
+        await dbContext.SaveChangesAsync();
         
         var invalidateResponse = await tokenService.InvalidateToken(request.token);
         if (invalidateResponse.IsFailure)
@@ -254,7 +267,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
 
     public async Task<Result<bool>> ResetPassword(ResetPasswordRequest request)
     {
-        var user = await userContext.Users.FirstOrDefaultAsync(x => x.Email == request.email);
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == request.email);
         
         if (user == null)
         {
@@ -285,7 +299,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
 
     public async Task<Result<bool>> ArchiveUser(ArchiveUserRequest request, Guid requester)
     {
-        var user = await userContext.Users.FirstOrDefaultAsync(x => x.Id == request.userId);
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == request.userId);
         
         if (user is null)
         {
@@ -300,15 +315,16 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
         
         user.ArchivedOn = DateTime.UtcNow;
         user.ArchivedById = requester;
-        userContext.Users.Update(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Update(user);
+        await dbContext.SaveChangesAsync();
 
         return true;
     }
 
     public async Task<Result<bool>> DeleteUser(DeleteUserRequest request)
     {
-        var user = await userContext.Users
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var user = await dbContext.Users
             .Where(x => x.ArchivedOn != null)
             .FirstOrDefaultAsync(x => x.Id == request.userId);
         
@@ -323,8 +339,8 @@ public class UserService(UserContext userContext, ITokenService tokenService, IU
             return invalidateAllTokens.Error;
         }
         
-        userContext.Users.Remove(user);
-        await userContext.SaveChangesAsync();
+        dbContext.Users.Remove(user);
+        await dbContext.SaveChangesAsync();
 
         return true;
     }
