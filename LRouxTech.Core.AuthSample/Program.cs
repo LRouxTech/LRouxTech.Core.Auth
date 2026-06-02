@@ -1,13 +1,25 @@
 using LRouxTech.Core.Auth.Api.Endpoints;
 using LRouxTech.Core.Auth.Api.Extensions;
+using LRouxTech.Core.Auth.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddScoped<IUserDbContextFactory, UserDbContextFactory>();
+
+if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("DefaultConnection")))
+{
+    var conString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContextFactory<UserContext, UserDbContextFactory>(options =>
+    {
+        options.UseNpgsql(conString,
+            o => o
+                .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+    });
+}
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthModule();

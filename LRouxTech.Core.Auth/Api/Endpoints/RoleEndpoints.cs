@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LRouxTech.Core.Auth.Api.Endpoints;
 
@@ -13,7 +14,7 @@ public static class RoleEndpoints
     {
         var group = endpoints.MapGroup(prefix);
 
-        group.MapGet("/", async (IRoleService roleService) =>
+        group.MapGet("/", async ([FromServices] IRoleService roleService) =>
             {
                 var result = await roleService.GetList();
                 if (result.IsFailure)

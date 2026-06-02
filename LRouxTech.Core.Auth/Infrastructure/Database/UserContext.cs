@@ -9,8 +9,30 @@ using Microsoft.Extensions.Configuration;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Database;
 
-public class UserDbContextFactory : IDesignTimeDbContextFactory<UserContext>
+public interface IUserDbContextFactory :  IDbContextFactory<UserContext>
 {
+}
+
+public class UserDbContextFactory : IDesignTimeDbContextFactory<UserContext>, IUserDbContextFactory
+{
+    public UserContext CreateDbContext()
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
+        var builder = new ConfigurationBuilder().AddJsonFile($"appsettings.json", false, true)
+            .AddEnvironmentVariables();
+        var configuration = builder.Build();
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), x =>
+            {
+                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "Auth");
+                x.MigrationsAssembly("LRouxTech.Core.Auth");
+            });
+        }
+
+        return new UserContext(optionsBuilder.Options);
+    }
+
     public UserContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<UserContext>();

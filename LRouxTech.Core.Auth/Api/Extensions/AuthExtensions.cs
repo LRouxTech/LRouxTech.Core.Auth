@@ -8,6 +8,7 @@ public static class AuthExtensions
 {
     public static IServiceCollection AddAuthModule(this IServiceCollection services)
     {
+        services.AddEmailModule();
         services.AddJwtAuth();
         services.AddUserModule();
         services.AddRoleModule();

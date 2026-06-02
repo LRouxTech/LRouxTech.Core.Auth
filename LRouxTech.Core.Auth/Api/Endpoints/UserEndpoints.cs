@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LRouxTech.Core.Auth.Api.Endpoints;
 
@@ -13,7 +14,7 @@ public static class UserEndpoints
     {
         var group = endpoints.MapGroup(prefix);
 
-        group.MapPost("/login", async (UserLoginRequest request, IUserService userService) =>
+        group.MapPost("/login", async ([FromBody] UserLoginRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.Login(request);
                 if (result.IsFailure)
@@ -24,7 +25,7 @@ public static class UserEndpoints
             })
             .WithName("LoginUser");
         
-        group.MapPost("/logout", async (UserLogoutRequest request, IUserService userService) =>
+        group.MapPost("/logout", async ([FromBody] UserLogoutRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.Logout(request);
                 if (result.IsFailure)
@@ -35,7 +36,7 @@ public static class UserEndpoints
             })
             .WithName("LogoutUser");
 
-        group.MapPost("/create", async (CreateUserRequest request, IUserService userService) =>
+        group.MapPost("/create", async ([FromBody] CreateUserRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.Create(request);
                 if (result.IsFailure)
@@ -46,7 +47,7 @@ public static class UserEndpoints
             })
             .WithName("CreateUser");
         
-        group.MapPost("/update", async (UpdateUserRequest request, IUserService userService) =>
+        group.MapPost("/update", async ([FromBody] UpdateUserRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.Update(request);
                 if (result.IsFailure)
@@ -57,7 +58,7 @@ public static class UserEndpoints
             })
             .WithName("UpdateUser");
 
-        group.MapPost("/authenticate", async (AuthenticateUserRequest request, IUserService userService) =>
+        group.MapPost("/authenticate", async ([FromBody] AuthenticateUserRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.Authenticate(request);
                 if (result.IsFailure)
@@ -68,7 +69,7 @@ public static class UserEndpoints
             })
             .WithName("AuthenticateUser");
         
-        group.MapGet("/", async (UserListRequest request, IUserService userService) =>
+        group.MapGet("/", async ([FromBody] UserListRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.GetUserList(request);
                 if (result.IsFailure)
@@ -79,7 +80,7 @@ public static class UserEndpoints
             })
             .WithName("GetUsers");
         
-        group.MapGet("/{UserId}", async (UserDetailRequest request, IUserService userService) =>
+        group.MapGet("/{UserId}", async ([FromBody] UserDetailRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.GetUser(request);
                 if (result.IsFailure)
@@ -90,7 +91,7 @@ public static class UserEndpoints
             })
             .WithName("GetUser");
                 
-        group.MapPost("/set-password", async (PasswordCreationRequest request, IUserService userService) =>
+        group.MapPost("/set-password", async ([FromBody] PasswordCreationRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.InitialPasswordSet(request);
                 if (result.IsFailure)
@@ -101,7 +102,7 @@ public static class UserEndpoints
             })
             .WithName("SetUserPassword");
         
-        group.MapPost("/update-password", async (UpdatePasswordRequest request, IUserService userService) =>
+        group.MapPost("/update-password", async ([FromBody] UpdatePasswordRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.UpdatePassword(request);
                 if (result.IsFailure)
@@ -112,7 +113,7 @@ public static class UserEndpoints
             })
             .WithName("UpdateUserPassword");
         
-        group.MapPost("/reset-password", async (ResetPasswordRequest request, IUserService userService) =>
+        group.MapPost("/reset-password", async ([FromBody] ResetPasswordRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.ResetPassword(request);
                 if (result.IsFailure)
@@ -123,7 +124,7 @@ public static class UserEndpoints
             })
             .WithName("ResetUserPassword");
         
-        group.MapPost("/archive/{userId}", async (ArchiveUserRequest request, IUserService userService, IHttpCurrentUserContext currentUserContext) =>
+        group.MapPost("/archive/{userId}", async ([FromBody] ArchiveUserRequest request, [FromServices] IUserService userService, [FromServices] IHttpCurrentUserContext currentUserContext) =>
             {
                 var result = await userService.ArchiveUser(request, currentUserContext.UserId!.Value);
                 if (result.IsFailure)
@@ -134,7 +135,7 @@ public static class UserEndpoints
             })
             .WithName("ArchiveUser");
         
-        group.MapPost("/delete/{userId}", async (DeleteUserRequest request, IUserService userService) =>
+        group.MapPost("/delete/{userId}", async ([FromBody] DeleteUserRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.DeleteUser(request);
                 if (result.IsFailure)

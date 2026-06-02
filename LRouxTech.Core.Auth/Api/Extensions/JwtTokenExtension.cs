@@ -41,6 +41,8 @@ public static class JwtTokenExtension
                 ClockSkew = TimeSpan.Zero
             };
         });
+        services.AddScoped<ITokenService, TokenService>();
+        
         return services;
     }
 }
