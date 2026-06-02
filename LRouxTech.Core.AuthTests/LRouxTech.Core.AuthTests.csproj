@@ -22,4 +22,8 @@
       <Folder Include="ServiceTests\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\LRouxTech.Core.Auth\LRouxTech.Core.Auth.csproj" />
+    </ItemGroup>
+
 </Project>
