@@ -66,5 +66,4 @@ public class TokenServiceTests : IAsyncLifetime
         results.Error.Should().NotBeNull();
         results.Error.Should().Be(UserErrors.UserNotFound);
     }
-    
 }
