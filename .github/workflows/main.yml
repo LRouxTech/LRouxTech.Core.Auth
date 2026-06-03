@@ -24,14 +24,14 @@ jobs:
       - name: Add .NET to PATH
         run: echo "${{ env.DOTNET_INSTALL_DIR }}" >> $GITHUB_PATH
 
-      - name: Restore Dependencies
-        run: dotnet restore
-
-      - name: Build Project
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Run Integration Tests
-        run: dotnet test --configuration Release --no-build
+      - name: Restore dependencies
+        run: dotnet restore --no-cache
+    
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+    
+      - name: Test
+        run: dotnet test --no-build --configuration Release
 
       - name: Pack Project
         run: dotnet pack --configuration Release --no-build --output ./artifacts
