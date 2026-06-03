@@ -2,11 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.Auth", "LRouxTech.Core.Auth\LRouxTech.Core.Auth.csproj", "{502451A0-45D9-4CDF-BB0D-950377D28002}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.AuthTests", "LRouxTech.Core.AuthTests\LRouxTech.Core.AuthTests.csproj", "{9EC6D9D4-2066-403D-8C3B-F974383790CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Tests.Auth", "LRouxTech.Tests.Auth\LRouxTech.Tests.Auth.csproj", "{9EC6D9D4-2066-403D-8C3B-F974383790CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.AuthSample", "LRouxTech.Core.AuthSample\LRouxTech.Core.AuthSample.csproj", "{25459E63-8F63-482A-8C5A-484D8F405960}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Sample.Auth", "LRouxTech.Sample.Auth\LRouxTech.Sample.Auth.csproj", "{25459E63-8F63-482A-8C5A-484D8F405960}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.Core.AuthAppHost", "LRouxTech.Core.AuthAppHost\LRouxTech.Core.AuthAppHost.csproj", "{904B40CA-72AB-4335-8345-DA9E00FE51B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRouxTech.AppHost.Auth", "LRouxTech.AppHost.Auth\LRouxTech.AppHost.Auth.csproj", "{904B40CA-72AB-4335-8345-DA9E00FE51B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
