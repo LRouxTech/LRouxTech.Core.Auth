@@ -1,0 +1,65 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    env:
+      DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Add .NET to PATH
+        run: echo "${{ env.DOTNET_INSTALL_DIR }}" >> $GITHUB_PATH
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Integration Tests
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack Project
+        run: dotnet pack --configuration Release --no-build --output ./artifacts
+
+      - name: Push to Private NuGet Registry
+        env:
+          NGINX_USERNAME: ${{ secrets.NGINX_USER }}
+          NGINX_PASSWORD: ${{ secrets.NGINX_PASSWORD }}
+          NUGET_SECRET_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          # Check if the package source 'PrivateRegistry' is already registered on this self-hosted runner
+          if dotnet nuget list source | grep -Fq "PrivateRegistry"; then
+            echo "Source 'PrivateRegistry' already exists. Updating credentials..."
+            dotnet nuget update source "PrivateRegistry" \
+              --source "https://nuget.lodewykroux.co.za/v3/index.json" \
+              --username "$NGINX_USERNAME" \
+              --password "$NGINX_PASSWORD" \
+              --store-password-in-clear-text
+          else
+            echo "Source 'PrivateRegistry' not found. Adding fresh source..."
+            dotnet nuget add source "https://nuget.lodewykroux.co.za/v3/index.json" \
+              --name "PrivateRegistry" \
+              --username "$NGINX_USERNAME" \
+              --password "$NGINX_PASSWORD" \
+              --store-password-in-clear-text
+          fi
+  
+          dotnet nuget push "./artifacts/*.nupkg" \
+            --source "PrivateRegistry" \
+            --api-key "$NUGET_SECRET_KEY" \
+            --skip-duplicate
