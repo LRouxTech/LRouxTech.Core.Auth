@@ -2,7 +2,7 @@
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.BaseModel;
 
-namespace LRouxTech.Core.AuthTests.TestData;
+namespace LRouxTech.Core.AuthTests.TestData.EntityData;
 
 public static class UserData
 {
@@ -38,6 +38,9 @@ public static class UserData
                 UserName = "UserName4",
             }.Create(),
         };
+        
+        dbContext.AddRange(data);
+        await dbContext.SaveChangesAsync();
     }
     
     public static User CreateExistingSave()

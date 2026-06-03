@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
+using LRouxTech.Core.AuthTests.TestData.EntityData;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LRouxTech.Core.AuthTests.TestData.Arguments;

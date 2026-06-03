@@ -30,6 +30,11 @@ public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == UserId);
+
+        if (user == null)
+        {
+            return UserErrors.UserNotFound;
+        }
         
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         

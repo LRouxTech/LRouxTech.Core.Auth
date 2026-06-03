@@ -5,6 +5,7 @@ using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Infrastructure.Validator;
 using LRouxTech.Core.AuthTests.TestData;
 using LRouxTech.Core.AuthTests.TestData.Arguments;
+using LRouxTech.Core.AuthTests.TestData.EntityData;
 using LRouxTech.Core.ValidationResult;
 
 namespace LRouxTech.Core.AuthTests.ValidatorTests;

@@ -9,6 +9,28 @@ using Microsoft.Extensions.Configuration;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Database;
 
+public class UserContextDesignTimeFactory : IDesignTimeDbContextFactory<UserContext>
+{
+    public UserContext CreateDbContext(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
+        optionsBuilder.UseNpgsql(connectionString, x =>
+        {
+            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+            x.MigrationsAssembly("LRouxTech.Core.Auth");
+        });
+
+        return new UserContext(optionsBuilder.Options);
+    }
+}
+
 public interface IUserDbContextFactory :  IDbContextFactory<UserContext>
 {
 }
@@ -82,5 +104,18 @@ public class UserContext : DbContext
         modelBuilder.Entity<UserPermission>().ConfigureUserPermission();
         modelBuilder.Entity<UserRole>().ConfigureUserRole();
         modelBuilder.Entity<UserToken>().ConfigureUserToken();
+        
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var properties = entityType.GetProperties()
+                .Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?));
+
+            foreach (var property in properties)
+            {
+                property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<DateTime, DateTime>(
+                    v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+            }
+        }
     }
 }

@@ -2,45 +2,44 @@
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.BaseModel;
 
-namespace LRouxTech.Core.AuthTests.TestData;
+namespace LRouxTech.Core.AuthTests.TestData.EntityData;
 
-public static class PermissionData
+public class RoleData
 {
     public static readonly Guid ExistingGuid = Guid.NewGuid();
 
     public static async Task SeedData(UserContext dbContext)
     {
-        var data = new List<Permission>
+        var data = new List<Role>
         {
             CreateExistingSave(),
-            new Permission()
+            new Role()
             {
-                Section = "Section2",
-                PermissionName = "Permission2",
+                Name = "Name2",
                 Description = "Description2",
             }.Create(),
-            new Permission()
+            new Role()
             {
-                Section = "Section3",
-                PermissionName = "Permission3",
+                Name = "Name3",
                 Description = "Description3",
             }.Create(),
-            new Permission()
+            new Role()
             {
-                Section = "Section4",
-                PermissionName = "Permission4",
+                Name = "Name4",
                 Description = "Description4",
             }.Create(),
         };
+        
+        dbContext.AddRange(data);
+        await dbContext.SaveChangesAsync();
     }
     
-    public static Permission CreateExistingSave()
+    public static Role CreateExistingSave()
     {
-        return new Permission()
+        return new Role()
         {
             Id = ExistingGuid,
-            Section = "Section1",
-            PermissionName = "Permission1",
+            Name = "Name1",
             Description = "Description1",
             CreatedById = BaseModelConstant.SystemId,
             CreatedOn = DateTime.Now,
@@ -48,5 +47,4 @@ public static class PermissionData
             UpdatedOn = DateTime.Now
         };
     }
-
 }

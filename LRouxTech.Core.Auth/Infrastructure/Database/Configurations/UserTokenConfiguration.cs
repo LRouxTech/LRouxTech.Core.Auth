@@ -18,7 +18,7 @@ public static class UserTokenConfiguration
 
         builder.Property(u => u.TokenValue)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(2048);
         
         builder.Property(u => u.CreatedOn)
             .IsRequired();
