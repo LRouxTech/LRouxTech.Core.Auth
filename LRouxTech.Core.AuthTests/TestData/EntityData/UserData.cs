@@ -10,6 +10,7 @@ public static class UserData
     public static readonly Guid ExistingGuid = Guid.NewGuid();
     public static readonly string Password = "Password123";
     public static readonly string UserName = "UserName1";
+    public static readonly string Email = "Email@gmail.com1";
     
     public static async Task SeedData(UserContext dbContext)
     {
@@ -53,7 +54,7 @@ public static class UserData
             Id = ExistingGuid,
             Name = "Name1",
             Surname = "Surname1",
-            Email = "Email@gmail.com1",
+            Email = Email,
             PasswordHash = PasswordHasher.HashPassword(Password),
             UserName = UserName,
             CreatedById = BaseModelConstant.SystemId,

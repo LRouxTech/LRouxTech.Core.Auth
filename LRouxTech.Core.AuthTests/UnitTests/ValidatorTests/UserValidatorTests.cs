@@ -64,9 +64,9 @@ public class UserValidatorTests
         var request = new UpdateUserRequest
         (
             UserData.ExistingGuid,
+            username,
             name,
             surname,
-            username,
             email,
             [RoleData.ExistingGuid],
             [PermissionData.ExistingGuid]

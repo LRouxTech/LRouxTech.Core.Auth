@@ -149,6 +149,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         }
 
         user.Name = request.Name;
+        user.Surname = request.Surname;
         user.Email = request.Email;
         user.UserName = request.Username;
         var rolesToRemove = user.UserRoles.Where(ur => !request.RoleIds.Contains(ur.RoleId)).ToList();
@@ -316,7 +317,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             { "ResetLink", $"https://{domain}/auth/reset-password?token={newToken}" },
         };
         
-        string htmlTemplate = LoadTemplate.RenderTemplate("PasswordReset.html", placeholders);
+        string htmlTemplate = LoadTemplate.RenderTemplate("ResetPassword.html", placeholders);
 
         await emailService.SendEmailAsync(user.Email, "Reset Your Password", htmlTemplate);
         
