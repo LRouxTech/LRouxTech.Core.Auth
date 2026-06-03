@@ -217,16 +217,22 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
     public async Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var user = await dbContext.Users.Select(x => new UserDetailResponse(x.Id, x.UserName, x.Email,
-            x.UserRoles.Select(y => y.RoleId).ToList(), x.UserPermissions.Select(y => y.PermissionId).ToList()))
-            .FirstOrDefaultAsync(x => x.UserId == request.UserId);
+        var user = await dbContext.Users.Select(x => new {x.Id, x.UserName, x.Email,
+            UserRoles = x.UserRoles.Select(y => y.RoleId), Permissions = x.UserPermissions.Select(y => y.PermissionId)})
+            .FirstOrDefaultAsync(x => x.Id == request.UserId);
 
         if (user == null)
         {
             return UserErrors.UserNotFound;
         }
 
-        return user;
+        return  new UserDetailResponse(
+            user.Id, 
+            user.UserName, 
+            user.Email,
+            user.UserRoles.ToList(),
+            user.Permissions.ToList()
+        );
     }
 
     public async Task<Result<bool>> InitialPasswordSet(PasswordCreationRequest request)

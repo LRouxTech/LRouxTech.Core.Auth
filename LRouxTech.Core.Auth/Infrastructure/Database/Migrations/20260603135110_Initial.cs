@@ -23,8 +23,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,8 +42,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,8 +64,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,8 +83,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -114,8 +114,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -145,8 +145,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ArchivedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    ArchivedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

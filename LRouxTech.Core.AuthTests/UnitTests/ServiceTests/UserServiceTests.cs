@@ -207,7 +207,7 @@ public class UserServiceTests : IAsyncLifetime
     {
         var result = await _userService.GetUser(new UserDetailRequest(Guid.CreateVersion7()));
 
-        result.IsSuccess.Should().Be(true);
+        result.IsFailure.Should().Be(true);
         result.Error.Should().Be(UserErrors.UserNotFound);
     }
 

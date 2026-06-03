@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20260603114843_Initial")]
+    [Migration("20260603135110_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,10 +31,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
@@ -75,10 +75,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
@@ -114,10 +114,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
@@ -153,10 +153,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
@@ -209,10 +209,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
@@ -248,10 +248,10 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArchivedById")
+                    b.Property<Guid?>("ArchivedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("ArchivedOn")
+                    b.Property<DateTime?>("ArchivedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedById")
