@@ -17,16 +17,18 @@ public static class UserPermissionConfiguration
 
         builder.Property(u => u.PermissionId)
             .IsRequired();
-
-        builder.HasOne<User>(x => x.User)
-            .WithMany(x => x.UserPermissions)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
         
-        builder.HasOne<Permission>(x => x.Permission)
-            .WithMany(x => x.UserPermissions)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
+        builder.HasOne(up => up.User)
+            .WithMany(u => u.UserPermissions)
+            .HasForeignKey(up => up.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(up => up.Permission)
+            .WithMany(p => p.UserPermissions)
+            .HasForeignKey(up => up.PermissionId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         return builder;
     }

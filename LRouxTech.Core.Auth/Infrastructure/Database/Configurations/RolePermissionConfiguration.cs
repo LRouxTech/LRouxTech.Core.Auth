@@ -17,16 +17,18 @@ public static class RolePermissionConfiguration
 
         builder.Property(u => u.PermissionId)
             .IsRequired();
-
-        builder.HasOne<Role>(x => x.Role)
-            .WithMany(x => x.RolePermissions)
-            .HasForeignKey(x => x.RoleId)
-            .IsRequired();
         
-        builder.HasOne<Permission>(x => x.Permission)
-            .WithMany(x => x.RolePermissions)
-            .HasForeignKey(x => x.PermissionId)
-            .IsRequired();
+        builder.HasOne(up => up.Role)
+            .WithMany(u => u.RolePermissions)
+            .HasForeignKey(up => up.RoleId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(up => up.Permission)
+            .WithMany(p => p.RolePermissions)
+            .HasForeignKey(up => up.PermissionId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         return builder;
     }

@@ -17,16 +17,18 @@ public static class UserRoleConfiguration
 
         builder.Property(u => u.RoleId)
             .IsRequired();
-
-        builder.HasOne<User>(x => x.User)
-            .WithMany(x => x.UserRoles)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
         
-        builder.HasOne<Role>(x => x.Role)
-            .WithMany(x => x.UserRoles)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
+        builder.HasOne(up => up.User)
+            .WithMany(u => u.UserRoles)
+            .HasForeignKey(up => up.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(up => up.Role)
+            .WithMany(p => p.UserRoles)
+            .HasForeignKey(up => up.RoleId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         return builder;
     }

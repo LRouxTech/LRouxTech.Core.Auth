@@ -32,21 +32,6 @@ public static class UserConfiguration
 
         builder.HasIndex(u => u.Email)
             .IsUnique();
-        
-        builder.HasMany<UserPermission>(x => x.UserPermissions)
-            .WithOne(x => x.User)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
-        
-        builder.HasMany<UserRole>(x => x.UserRoles)
-            .WithOne(x => x.User)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
-        
-        builder.HasMany<UserToken>(x => x.UserTokens)
-            .WithOne(x => x.User)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
 
         return builder;
     }

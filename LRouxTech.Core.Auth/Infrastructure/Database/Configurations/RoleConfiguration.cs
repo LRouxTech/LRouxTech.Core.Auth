@@ -20,16 +20,6 @@ public static class RoleConfiguration
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.HasMany<RolePermission>(x => x.RolePermissions)
-            .WithOne(x => x.Role)
-            .HasForeignKey(x => x.RoleId)
-            .IsRequired();
-        
-        builder.HasMany<UserRole>(x => x.UserRoles)
-            .WithOne(x => x.Role)
-            .HasForeignKey(x => x.RoleId)
-            .IsRequired();
-
         return builder;
     }
 }

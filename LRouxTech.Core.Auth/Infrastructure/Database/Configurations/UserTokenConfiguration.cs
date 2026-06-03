@@ -28,11 +28,12 @@ public static class UserTokenConfiguration
         
         builder.Property(u => u.Expired)
             .IsRequired();
-
-        builder.HasOne<User>(x => x.User)
-            .WithMany(x => x.UserTokens)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
+        
+        builder.HasOne(up => up.User)
+            .WithMany(p => p.UserTokens)
+            .HasForeignKey(up => up.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         return builder;
     }

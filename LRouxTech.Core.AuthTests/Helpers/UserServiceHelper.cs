@@ -16,6 +16,6 @@ public class UserServiceHelper
     {
         return new UserService(factory,
             new TokenService(factory, ConfigurationMockHelper.CreateConfigurationMock().Object), new UserValidator(),
-            new EmailService(EmailSettingsHelper.EmailSettingsOptions()));
+            EmailMockHelper.EmailMock().Object);
     }
 }

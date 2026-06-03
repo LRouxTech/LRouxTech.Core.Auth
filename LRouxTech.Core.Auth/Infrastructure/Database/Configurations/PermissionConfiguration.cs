@@ -23,16 +23,6 @@ public static class PermissionConfiguration
         builder.Property(u => u.Description)
             .HasMaxLength(150);
         
-        builder.HasMany<RolePermission>(x => x.RolePermissions)
-            .WithOne(x => x.Permission)
-            .HasForeignKey(x => x.PermissionId)
-            .IsRequired();
-        
-        builder.HasMany<UserPermission>(x => x.UserPermissions)
-            .WithOne(x => x.Permission)
-            .HasForeignKey(x => x.PermissionId)
-            .IsRequired();
-
         return builder;
     }
 }

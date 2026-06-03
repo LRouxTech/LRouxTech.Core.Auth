@@ -90,6 +90,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         var user = new User
         {
             Name = request.Name,
+            Surname = request.Surname,
             Email = request.Email,
             UserName = request.Username,
             PasswordHash = tempHash,
@@ -98,14 +99,6 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         };
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-        
-                
-        string htmlTemplate = LoadTemplate.LoadEmbeddedTemplate("WelcomeMail.html");
-
-        string localizedBody = htmlTemplate
-            .Replace("{ResetLink}", "https://yourdomain.co.za/auth/reset-password?token=xyz123");
-
-        await emailService.SendEmailAsync(user.Email, "Reset Your Password", localizedBody);
         
         user = await dbContext.Users
             .Include(x => x.UserPermissions)
@@ -116,6 +109,25 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         {
             return UserErrors.UserNotFound;
         }
+
+        var tokenResult = await tokenService.GenerateToken(user.Id);
+        if (tokenResult.IsFailure)
+        {
+            return tokenResult.Error;
+        }
+        
+        // Replace with appsettings
+        string domain = "";
+        var placeholders = new Dictionary<string, string>
+        {
+            { "ResetLink", $"https://{domain}/auth/reset-password?token={tokenResult.Value.TokenValue}" },
+        };
+        
+        string htmlTemplate = LoadTemplate.RenderTemplate("WelcomeMail.html", placeholders);
+        
+        await emailService.SendEmailAsync(user.Email, "Reset Your Password", htmlTemplate);
+        
+
         
         return user;
     }
@@ -295,13 +307,18 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         {
             return newToken.Error;
         }
+
+        // Replace with appsettings
+        string domain = "";
         
-        string htmlTemplate = LoadTemplate.LoadEmbeddedTemplate("PasswordReset.html");
+        var placeholders = new Dictionary<string, string>
+        {
+            { "ResetLink", $"https://{domain}/auth/reset-password?token={newToken}" },
+        };
+        
+        string htmlTemplate = LoadTemplate.RenderTemplate("PasswordReset.html", placeholders);
 
-        string localizedBody = htmlTemplate
-            .Replace("{ResetLink}", "https://yourdomain.co.za/auth/reset-password?token=xyz123");
-
-        await emailService.SendEmailAsync(user.Email, "Reset Your Password", localizedBody);
+        await emailService.SendEmailAsync(user.Email, "Reset Your Password", htmlTemplate);
         
         return true;
     }

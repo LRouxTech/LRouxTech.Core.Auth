@@ -4,15 +4,31 @@ namespace LRouxTech.Core.Auth.Infrastructure.Templates;
 
 public static class LoadTemplate
 {
-    public static string LoadEmbeddedTemplate(string templateName)
+    /// <summary>
+    /// Loads an embedded HTML template and replaces dynamic tokens.
+    /// </summary>
+    public static string RenderTemplate(string templateName, Dictionary<string, string> placeholders)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        string resourcePath = $"LRouxTech.Core.Mail.Templates.{templateName}.html";
+        var assembly = Assembly.GetExecutingAssembly(); 
+        
+        string? resourceName = assembly.GetManifestResourceNames()
+            .FirstOrDefault(str => str.EndsWith(templateName, StringComparison.OrdinalIgnoreCase));
 
-        using Stream stream = assembly.GetManifestResourceStream(resourcePath) 
-                              ?? throw new FileNotFoundException($"Could not find embedded email template: {resourcePath}");
-            
+        if (string.IsNullOrEmpty(resourceName))
+        {
+            throw new FileNotFoundException($"Could not find embedded template matching '{templateName}'. " +
+                                            $"Ensure its Build Action is set to 'Embedded Resource'.");
+        }
+
+        using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
         using StreamReader reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        string htmlContent = reader.ReadToEnd();
+
+        foreach (var placeholder in placeholders)
+        {
+            htmlContent = htmlContent.Replace($"{{{placeholder.Key}}}", placeholder.Value);
+        }
+
+        return htmlContent;
     }
 }

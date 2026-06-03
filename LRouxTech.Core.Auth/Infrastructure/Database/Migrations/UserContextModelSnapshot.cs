@@ -232,6 +232,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PermissionId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("UserPermissions", (string)null);
@@ -268,6 +270,8 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
 
@@ -327,7 +331,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                 {
                     b.HasOne("LRouxTech.Core.Auth.Core.Entities.Permission", "Permission")
                         .WithMany("UserPermissions")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -346,7 +350,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                 {
                     b.HasOne("LRouxTech.Core.Auth.Core.Entities.Role", "Role")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
