@@ -21,7 +21,10 @@ public class PostgresFixture : IAsyncLifetime
         await _container.StartAsync();
 
         DbOptions = new DbContextOptionsBuilder<UserContext>()
-            .UseNpgsql(_container.GetConnectionString())
+            .UseNpgsql(_container.GetConnectionString(), npgsqlOptions => 
+            {
+                npgsqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            })
             .Options;
 
         // Run migrations using a temporary context instance

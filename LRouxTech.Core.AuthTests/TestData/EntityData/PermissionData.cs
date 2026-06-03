@@ -46,9 +46,9 @@ public static class PermissionData
             PermissionName = "Permission1",
             Description = "Description1",
             CreatedById = BaseModelConstant.SystemId,
-            CreatedOn = DateTime.Now,
+            CreatedOn = DateTime.UtcNow,
             UpdatedById = BaseModelConstant.SystemId,
-            UpdatedOn = DateTime.Now
+            UpdatedOn = DateTime.UtcNow
         };
     }
 

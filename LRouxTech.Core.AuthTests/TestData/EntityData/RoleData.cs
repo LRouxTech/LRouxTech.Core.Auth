@@ -42,9 +42,9 @@ public class RoleData
             Name = "Name1",
             Description = "Description1",
             CreatedById = BaseModelConstant.SystemId,
-            CreatedOn = DateTime.Now,
+            CreatedOn = DateTime.UtcNow,
             UpdatedById = BaseModelConstant.SystemId,
-            UpdatedOn = DateTime.Now
+            UpdatedOn = DateTime.UtcNow
         };
     }
 }

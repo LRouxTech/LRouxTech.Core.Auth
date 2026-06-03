@@ -21,7 +21,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = await dbContext.Users
-            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.Now))
+            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.UtcNow))
             .Include(x => x.UserPermissions).Include(x => x.UserRoles)
             .FirstOrDefaultAsync(x => x.UserName == request.UserName);
         if (user == null)
@@ -58,7 +58,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = await dbContext.Users
-            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.Now))
+            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.UtcNow))
             .FirstOrDefaultAsync(x => x.Id == request.UserId);
         if (user == null)
         {
@@ -106,7 +106,16 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             .Replace("{ResetLink}", "https://yourdomain.co.za/auth/reset-password?token=xyz123");
 
         await emailService.SendEmailAsync(user.Email, "Reset Your Password", localizedBody);
+        
+        user = await dbContext.Users
+            .Include(x => x.UserPermissions)
+            .Include(x => x.UserRoles)
+            .FirstOrDefaultAsync(x => x.Id == user.Id);
 
+        if (user == null)
+        {
+            return UserErrors.UserNotFound;
+        }
         
         return user;
     }

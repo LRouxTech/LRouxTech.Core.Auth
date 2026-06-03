@@ -1,5 +1,6 @@
 ﻿using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Infrastructure.Database;
+using LRouxTech.Core.Auth.Infrastructure.Helper;
 using LRouxTech.Core.BaseModel;
 
 namespace LRouxTech.Core.AuthTests.TestData.EntityData;
@@ -7,7 +8,9 @@ namespace LRouxTech.Core.AuthTests.TestData.EntityData;
 public static class UserData
 {
     public static readonly Guid ExistingGuid = Guid.NewGuid();
-
+    public static readonly string Password = "Password123";
+    public static readonly string UserName = "UserName1";
+    
     public static async Task SeedData(UserContext dbContext)
     {
         var data = new List<User>
@@ -51,12 +54,12 @@ public static class UserData
             Name = "Name1",
             Surname = "Surname1",
             Email = "Email@gmail.com1",
-            PasswordHash = new byte[32],
-            UserName = "UserName1",
+            PasswordHash = PasswordHasher.HashPassword(Password),
+            UserName = UserName,
             CreatedById = BaseModelConstant.SystemId,
-            CreatedOn = DateTime.Now,
+            CreatedOn = DateTime.UtcNow,
             UpdatedById = BaseModelConstant.SystemId,
-            UpdatedOn = DateTime.Now
+            UpdatedOn = DateTime.UtcNow
         };
     }
 

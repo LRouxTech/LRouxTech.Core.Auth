@@ -52,7 +52,6 @@ public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration
             claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
         }
 
-        // 4. Create the token descriptor
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
@@ -100,7 +99,7 @@ public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration
             return TokenErrors.TokenNotFound;
         }
 
-        if (userToken.ExpiresOn <= DateTime.Now)
+        if (userToken.ExpiresOn <= DateTime.UtcNow)
         {
             userToken.Expired = true;
             dbContext.UserTokens.Update(userToken);
