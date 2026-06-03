@@ -18,14 +18,59 @@ public class UserValidatorTests
     }
     
     [Theory]
-    [ClassData(typeof(UserCreateValidationArgs))]
-    public void ValidateUser_ValidUser_Success(Guid userId, CreateUserRequest request, Result<bool> result, Type exceptionType)
+    [ClassData(typeof(UserCreationValidationArgs))]
+    public void ValidateUserCreation_InvalidUser_ReturnsError(Guid userId, CreateUserRequest request, Result<bool> result, Type exceptionType)
     {
         // Arrange
         SetUp();
         
         // Act
         var actualResult = _userValidator!.ValidateUserCreation(request);
+    
+        // Assert
+        actualResult.IsFailure.Should().BeTrue(); 
+        actualResult.Error.Should().Be(result.Error);
+    }
+    
+    [Theory]
+    [ClassData(typeof(UserUpdateValidationArgs))]
+    public void ValidateUserUpdate_InvalidUser_ReturnsError(Guid userId, UpdateUserRequest request, Result<bool> result, Type exceptionType)
+    {
+        // Arrange
+        SetUp();
+        
+        // Act
+        var actualResult = _userValidator!.ValidateUserUpdate(request);
+    
+        // Assert
+        actualResult.IsFailure.Should().BeTrue(); 
+        actualResult.Error.Should().Be(result.Error);
+    }
+    
+    [Theory]
+    [ClassData(typeof(PasswordCreationValidationArgs))]
+    public void ValidatePasswordCreation_InvalidPassword_ReturnsError(Guid userId, PasswordCreationRequest request, Result<bool> result, Type exceptionType)
+    {
+        // Arrange
+        SetUp();
+        
+        // Act
+        var actualResult = _userValidator!.ValidateUserPasswordCreation(request);
+    
+        // Assert
+        actualResult.IsFailure.Should().BeTrue(); 
+        actualResult.Error.Should().Be(result.Error);
+    }
+    
+    [Theory]
+    [ClassData(typeof(PasswordUpdateValidationArgs))]
+    public void ValidatePasswordUpdate_InvalidPassword_ReturnsError(Guid userId, UpdatePasswordRequest request, Result<bool> result, Type exceptionType)
+    {
+        // Arrange
+        SetUp();
+        
+        // Act
+        var actualResult = _userValidator!.ValidateUserPasswordUpdate(request);
     
         // Assert
         actualResult.IsFailure.Should().BeTrue(); 

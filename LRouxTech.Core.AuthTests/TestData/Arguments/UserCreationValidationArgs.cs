@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LRouxTech.Core.AuthTests.TestData.Arguments;
 
-public class UserCreateValidationArgs : IEnumerable<object[]>
+public class UserCreationValidationArgs : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
