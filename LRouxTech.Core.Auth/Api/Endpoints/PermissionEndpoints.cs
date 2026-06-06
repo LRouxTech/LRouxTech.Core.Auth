@@ -1,3 +1,4 @@
+using LRouxTech.Core.Auth.Api.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -23,7 +24,8 @@ public static class PermissionEndpoints
                 return Results.Ok(result.Value);
 
             })
-            .WithName("GetPermissions");
+            .WithName("GetPermissions")
+            .RequireRole(AppRoles.Admin);
 
         return endpoints;
     }

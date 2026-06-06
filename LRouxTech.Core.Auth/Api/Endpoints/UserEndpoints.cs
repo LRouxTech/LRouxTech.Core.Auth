@@ -1,3 +1,4 @@
+using LRouxTech.Core.Auth.Api.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -45,7 +46,8 @@ public static class UserEndpoints
                 }
                 return Results.Created($"{prefix}/{result.Value.Id}", result.Value);
             })
-            .WithName("CreateUser");
+            .WithName("CreateUser")
+            .RequirePermission(AppPermissions.UserManagement.Create);
         
         group.MapPost("/update", async ([FromBody] UpdateUserRequest request, [FromServices] IUserService userService) =>
             {
@@ -56,7 +58,8 @@ public static class UserEndpoints
                 }
                 return Results.Created($"{prefix}/{result.Value.Id}", result.Value);
             })
-            .WithName("UpdateUser");
+            .WithName("UpdateUser")
+            .RequirePermission(AppPermissions.UserManagement.Update);
 
         group.MapPost("/authenticate", async ([FromBody] AuthenticateUserRequest request, [FromServices] IUserService userService) =>
             {
@@ -78,7 +81,8 @@ public static class UserEndpoints
                 }
                 return Results.Ok(result.Value);
             })
-            .WithName("GetUsers");
+            .WithName("GetUsers")
+            .RequirePermission(AppPermissions.UserManagement.Read);
         
         group.MapGet("/{UserId}", async ([FromBody] UserDetailRequest request, [FromServices] IUserService userService) =>
             {
@@ -89,7 +93,8 @@ public static class UserEndpoints
                 }
                 return Results.Ok(result.Value);
             })
-            .WithName("GetUser");
+            .WithName("GetUser")
+            .RequirePermission(AppPermissions.UserManagement.Read);
                 
         group.MapPost("/set-password", async ([FromBody] PasswordCreationRequest request, [FromServices] IUserService userService) =>
             {
@@ -133,7 +138,8 @@ public static class UserEndpoints
                 }
                 return Results.Ok(result.Value);
             })
-            .WithName("ArchiveUser");
+            .WithName("ArchiveUser")
+            .RequirePermission(AppPermissions.UserManagement.Delete);
         
         group.MapPost("/delete/{userId}", async ([FromBody] DeleteUserRequest request, [FromServices] IUserService userService) =>
             {
@@ -144,7 +150,8 @@ public static class UserEndpoints
                 }
                 return Results.Ok(result.Value);
             })
-            .WithName("DeleteUser");
+            .WithName("DeleteUser")
+            .RequirePermission(AppPermissions.UserManagement.Delete);
 
         return endpoints;
     }

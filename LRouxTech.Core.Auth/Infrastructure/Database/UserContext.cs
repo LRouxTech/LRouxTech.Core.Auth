@@ -84,7 +84,7 @@ public class UserContext : DbContext
         
             optionsBuilder.UseNpgsql(connectionString, x =>
             {
-                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+                x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "User");
                 x.MigrationsAssembly("LRouxTech.Core.Auth");
             });
         }

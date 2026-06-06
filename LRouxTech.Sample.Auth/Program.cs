@@ -1,6 +1,8 @@
+using LRouxTech.Core.Auth.Api.Authorization;
 using LRouxTech.Core.Auth.Api.Endpoints;
 using LRouxTech.Core.Auth.Api.Extensions;
 using LRouxTech.Core.Auth.Infrastructure.Database;
+using LRouxTech.Sample.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Scalar.AspNetCore;
@@ -33,7 +35,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthModule();
-
+builder.Services.AddCustomPermissions<LocalPermissions>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

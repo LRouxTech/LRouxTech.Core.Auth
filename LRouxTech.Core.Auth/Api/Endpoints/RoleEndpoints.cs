@@ -1,3 +1,4 @@
+using LRouxTech.Core.Auth.Api.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -25,7 +26,8 @@ public static class RoleEndpoints
                 return Results.Ok(result.Value);
 
             })
-            .WithName("GetRoles");
+            .WithName("GetRoles")
+            .RequireRole(AppRoles.Admin);
 
         return endpoints;
     }
