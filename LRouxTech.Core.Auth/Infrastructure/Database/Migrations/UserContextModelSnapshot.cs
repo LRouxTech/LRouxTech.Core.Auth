@@ -17,9 +17,11 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("User")
                 .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "plpgsql");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.Permission", b =>
@@ -63,7 +65,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.Role", b =>
@@ -102,7 +104,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.RolePermission", b =>
@@ -141,7 +143,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.User", b =>
@@ -197,7 +199,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.UserPermission", b =>
@@ -236,7 +238,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserPermissions", (string)null);
+                    b.ToTable("UserPermissions", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.UserRole", b =>
@@ -275,7 +277,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.UserToken", b =>
@@ -305,7 +307,7 @@ namespace LRouxTech.Core.Auth.Infrastructure.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserTokens", (string)null);
+                    b.ToTable("UserTokens", "User");
                 });
 
             modelBuilder.Entity("LRouxTech.Core.Auth.Core.Entities.RolePermission", b =>

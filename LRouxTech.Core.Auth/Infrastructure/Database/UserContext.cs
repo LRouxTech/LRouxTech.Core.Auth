@@ -23,7 +23,7 @@ public class UserContextDesignTimeFactory : IDesignTimeDbContextFactory<UserCont
         var optionsBuilder = new DbContextOptionsBuilder<UserContext>();
         optionsBuilder.UseNpgsql(connectionString, x =>
         {
-            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "User");
             x.MigrationsAssembly("LRouxTech.Core.Auth");
         });
 
@@ -96,7 +96,11 @@ public class UserContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
+        modelBuilder.HasPostgresExtension("plpgsql");
+    
+        modelBuilder.HasDefaultSchema("User");
+        
         modelBuilder.Entity<Permission>().ConfigurePermission();
         modelBuilder.Entity<Role>().ConfigureRole();
         modelBuilder.Entity<RolePermission>().ConfigureRolePermission();

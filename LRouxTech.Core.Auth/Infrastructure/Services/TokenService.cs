@@ -27,8 +27,12 @@ public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration
         }
         
         var user = await dbContext.Users
+            .Include(x => x.UserPermissions)
+            .ThenInclude(x => x.Permission)
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
+            .ThenInclude(r => r.RolePermissions)
+            .ThenInclude(rp => rp.Permission)
             .FirstOrDefaultAsync(x => x.Id == UserId);
 
         if (user == null)
@@ -46,10 +50,23 @@ public class TokenService(IUserDbContextFactory dbContextFactory, IConfiguration
             new Claim(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
-
-        foreach (var role in user.UserRoles)
+        
+        foreach (var userRole in user.UserRoles)
         {
-            claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
+            claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+    
+            foreach (var rolePermission in userRole.Role.RolePermissions)
+            {
+                claims.Add(new Claim("permission", rolePermission.Permission.PermissionName));
+            }
+        }
+        
+        foreach (var permission in user.UserPermissions)
+        {
+            if (claims.All(x => x.Value != permission.Permission.PermissionName))
+            {
+                claims.Add(new Claim("permission", permission.Permission.PermissionName));
+            }
         }
 
         var token = new JwtSecurityToken(

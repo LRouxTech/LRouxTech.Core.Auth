@@ -24,7 +24,7 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("testdb
         options.UseNpgsql(conString, x =>
         {
             x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+            x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "User");
             x.MigrationsAssembly("LRouxTech.Core.Auth");
         });
     });
@@ -40,11 +40,30 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var contextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<UserContext>>();
+    var services = scope.ServiceProvider;
+    try
+    {
+        var contextFactory = services.GetRequiredService<IDbContextFactory<UserContext>>();
+        using var context = await contextFactory.CreateDbContextAsync();
+            
+        await context.Database.MigrateAsync(); 
         
-    using var context = await contextFactory.CreateDbContextAsync();
+        await RuntimeDataSeeder.SeedPermissionsAsync<LocalPermissions>(context);
         
-    await context.Database.MigrateAsync(); 
+        await RuntimeDataSeeder.SeedRolesAsync<LocalRoles>(context);
+
+        await RuntimeDataSeeder.SeedAdminUserAsync(context);
+
+        await RuntimeDataSeeder.SyncRolePermissionsAsync(context, LocalRoles.InventoryAuditor, [
+            LocalPermissions.Inventory.AdjustStock,
+            LocalPermissions.Inventory.ViewStock
+        ]);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred during database initialization or data seeding.");
+    }
 }
 
 if (app.Environment.IsDevelopment())

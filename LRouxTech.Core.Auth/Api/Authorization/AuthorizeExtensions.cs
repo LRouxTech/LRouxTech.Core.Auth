@@ -7,7 +7,6 @@ namespace LRouxTech.Core.Auth.Api.Authorization;
 
 public static class AuthorizationExtensions
 {
-    // The consumer passes their local permission class as a generic argument
     public static IServiceCollection AddCustomPermissions<TPermissions>(this IServiceCollection services) 
         where TPermissions : AppPermissions
     {
@@ -29,21 +28,26 @@ public static class AuthorizationExtensions
 
     private static List<PermissionKey> ExtractPermissionKeys(Type type)
     {
+        var targetAssembly = type.Assembly;
+
+        var baseAssembly = typeof(AppPermissions).Assembly;
+
+        var assembliesToScan = new[] { targetAssembly, baseAssembly }.Distinct();
+
         var keys = new List<PermissionKey>();
 
-        var nestedTypes = type.GetNestedTypes(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-        foreach (var nested in nestedTypes)
+        foreach (var assembly in assembliesToScan)
         {
-            var fields = nested.GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Where(f => f.FieldType == typeof(PermissionKey));
+            var foundKeys = assembly.GetTypes()
+                .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+                .Where(f => f.FieldType == typeof(PermissionKey))
+                .Select(f => (PermissionKey)f.GetValue(null)!)
+                .ToList();
 
-            foreach (var field in fields)
-            {
-                keys.Add((PermissionKey)field.GetValue(null)!);
-            }
+            keys.AddRange(foundKeys);
         }
 
-        return keys;
+        return keys.GroupBy(k => k.Value).Select(g => g.First()).ToList();
     }
     
     public static RouteHandlerBuilder RequirePermission(this RouteHandlerBuilder builder, PermissionKey permission)
