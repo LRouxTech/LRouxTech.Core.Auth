@@ -1,8 +1,8 @@
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
-using LRouxTech.Core.Auth.Core.ViewModels.User.Reponse;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
+using LRouxTech.Core.Auth.Core.ViewModels.User.Response;
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
 using LRouxTech.Core.Auth.Infrastructure.Helper;

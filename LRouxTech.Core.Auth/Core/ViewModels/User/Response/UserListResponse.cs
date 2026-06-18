@@ -1,4 +1,4 @@
-﻿namespace LRouxTech.Core.Auth.Core.ViewModels.User.Reponse;
+﻿namespace LRouxTech.Core.Auth.Core.ViewModels.User.Response;
 
 public record UserListResponse(
     List<ListUser> Users,
