@@ -22,7 +22,8 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = await dbContext.Users
             .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.UtcNow))
-            .Include(x => x.UserPermissions).Include(x => x.UserRoles)
+            .Include(x => x.UserPermissions)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions)
             .FirstOrDefaultAsync(x => x.UserName == request.UserName);
         if (user == null)
         {
@@ -51,7 +52,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         }
 
         return new SignedInUserResponse(user.Id, user.UserName, user.Email, userToken.TokenValue, userToken.ExpiresOn,
-            user.UserRoles.Select(x => x.RoleId).ToList(), user.UserPermissions.Select(x => x.PermissionId).ToList());
+            user.UserRoles.Select(x => x.RoleId).ToList(), user.UserPermissions.Select(x => x.PermissionId).Concat(user.UserRoles.SelectMany(x => x.Role.RolePermissions).Select(x => x.PermissionId)).Distinct().ToList());
     }
 
     public async Task<Result<bool>> Logout(UserLogoutRequest request)
