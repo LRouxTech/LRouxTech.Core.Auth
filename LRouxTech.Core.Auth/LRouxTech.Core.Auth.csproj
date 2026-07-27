@@ -15,7 +15,7 @@
         <RepositoryUrl>https://github.com/LRouxTech/Auth</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
 
-        <Version>0.5.0</Version>
+        <Version>0.6.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
