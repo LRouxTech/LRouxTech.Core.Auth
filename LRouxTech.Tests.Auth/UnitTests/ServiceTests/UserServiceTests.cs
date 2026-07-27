@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
@@ -185,9 +186,9 @@ public class UserServiceTests : IAsyncLifetime
     [Fact]
     public async Task GetUsers_ActiveUsers_ShouldReturnUsers()
     {
-        var results = await _userService.GetUserList(new UserListRequest(true));
+        var results = await _userService.GetUserList(new PagedRequest());
 
-        results.Value.Users.Should().NotBeNullOrEmpty();
+        results.Value.Items.Should().NotBeNullOrEmpty();
     }
     
     [Fact]

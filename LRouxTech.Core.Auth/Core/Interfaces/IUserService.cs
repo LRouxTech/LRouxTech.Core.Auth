@@ -1,3 +1,4 @@
+using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
@@ -13,7 +14,7 @@ public interface IUserService
     Task<Result<User>> Create(CreateUserRequest request);
     Task<Result<User>> Update(UpdateUserRequest request);
     Task<Result<SignedInUserResponse>> Authenticate(AuthenticateUserRequest request);
-    Task<Result<UserListResponse>> GetUserList(UserListRequest request);
+    Task<Result<PagedList<ListUser>>> GetUserList(PagedRequest request);
     Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request);
     Task<Result<bool>> InitialPasswordSet(PasswordCreationRequest request);
     Task<Result<bool>> UpdatePassword(UpdatePasswordRequest request);

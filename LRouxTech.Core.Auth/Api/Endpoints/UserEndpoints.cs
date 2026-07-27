@@ -1,3 +1,4 @@
+using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Api.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -72,7 +73,7 @@ public static class UserEndpoints
             })
             .WithName("AuthenticateUser");
         
-        group.MapGet("/", async ([FromBody] UserListRequest request, [FromServices] IUserService userService) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, [FromServices] IUserService userService) =>
             {
                 var result = await userService.GetUserList(request);
                 if (result.IsFailure)

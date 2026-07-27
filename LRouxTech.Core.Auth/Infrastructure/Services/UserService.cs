@@ -1,3 +1,4 @@
+using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
@@ -205,14 +206,21 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             token.ExpiresOn, roles, permissions);
     }
 
-    public async Task<Result<UserListResponse>> GetUserList(UserListRequest request)
+    public async Task<Result<PagedList<ListUser>>> GetUserList(PagedRequest request)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var user = await dbContext.Users.Include(x => x.UserRoles).Skip((request.page - 1) * request.rows)
-            .Where(x => request.activeUsers ? x.ArchivedOn == null : x.ArchivedOn != null)
+        var query = dbContext.Users.AsNoTracking();
+
+        var totalCount = await query.CountAsync();
+        
+        var items = await query
+            .OrderBy(x => x.Id)
+            .Skip((request.PageIndex - 1) * request.PageSize)
+            .Take(request.PageSize)
             .Select(x => new ListUser(x.Id, x.Name, x.Email, x.UserRoles.Select(y => y.Role.Name).ToList()))
-            .Take(request.rows).ToListAsync();
-        return new UserListResponse(user, request.rows, request.page);
+            .ToListAsync();
+        
+        return new PagedList<ListUser>(items, totalCount, request.PageIndex, request.PageSize);
     }
 
     public async Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
