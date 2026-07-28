@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
+using LRouxTech.Core.Auth.Infrastructure.Paged;
 using LRouxTech.Core.Auth.Infrastructure.Services;
 using LRouxTech.Tests.Auth.Helpers;
 using LRouxTech.Tests.Auth.TestData.Arguments;

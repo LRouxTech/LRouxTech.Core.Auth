@@ -1,4 +1,3 @@
-using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
@@ -7,6 +6,7 @@ using LRouxTech.Core.Auth.Core.ViewModels.User.Response;
 using LRouxTech.Core.Auth.Infrastructure.Database;
 using LRouxTech.Core.Auth.Infrastructure.Errors;
 using LRouxTech.Core.Auth.Infrastructure.Helper;
+using LRouxTech.Core.Auth.Infrastructure.Paged;
 using LRouxTech.Core.Auth.Infrastructure.Templates;
 using LRouxTech.Core.Auth.Infrastructure.Validator;
 using LRouxTech.Core.Mail;

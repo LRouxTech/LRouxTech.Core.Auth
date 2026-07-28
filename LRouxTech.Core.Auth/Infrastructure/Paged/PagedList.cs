@@ -1,4 +1,4 @@
-﻿namespace Isotainer.Core.Api.tempmodels;
+﻿namespace LRouxTech.Core.Auth.Infrastructure.Paged;
 
 public class PagedList<T>
 {

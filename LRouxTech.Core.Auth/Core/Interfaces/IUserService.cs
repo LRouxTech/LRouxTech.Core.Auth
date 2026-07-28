@@ -1,8 +1,8 @@
-using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Core.Entities;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Response;
+using LRouxTech.Core.Auth.Infrastructure.Paged;
 using LRouxTech.Core.ValidationResult;
 
 namespace LRouxTech.Core.Auth.Core.Interfaces;

@@ -1,4 +1,3 @@
-using Isotainer.Core.Api.tempmodels;
 using LRouxTech.Core.Auth.Api.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using LRouxTech.Core.Auth.Core.Interfaces;
 using LRouxTech.Core.Auth.Core.ViewModels.User;
 using LRouxTech.Core.Auth.Core.ViewModels.User.Request;
+using LRouxTech.Core.Auth.Infrastructure.Paged;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LRouxTech.Core.Auth.Api.Endpoints;
