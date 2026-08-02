@@ -85,9 +85,9 @@ public static class UserEndpoints
             .WithName("GetUsers")
             .RequirePermission(AppPermissions.UserManagement.Read);
         
-        group.MapGet("/{UserId}", async ([FromBody] UserDetailRequest request, [FromServices] IUserService userService) =>
+        group.MapGet("/{UserId}", async (Guid userId, [FromServices] IUserService userService) =>
             {
-                var result = await userService.GetUser(request);
+                var result = await userService.GetUser(new(userId));
                 if (result.IsFailure)
                 {
                     return Results.BadRequest(result.Error);
