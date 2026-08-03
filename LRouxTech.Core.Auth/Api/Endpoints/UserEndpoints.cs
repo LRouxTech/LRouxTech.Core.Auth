@@ -45,7 +45,7 @@ public static class UserEndpoints
                 {
                     return Results.BadRequest(result.Error);
                 }
-                return Results.Created($"{prefix}/{result.Value.Id}", result.Value);
+                return Results.Created($"{prefix}/{result.Value.UserId}", result.Value);
             })
             .WithName("CreateUser")
             .RequirePermission(AppPermissions.UserManagement.Create);
@@ -57,7 +57,7 @@ public static class UserEndpoints
                 {
                     return Results.BadRequest(result.Error);
                 }
-                return Results.Created($"{prefix}/{result.Value.Id}", result.Value);
+                return Results.Created($"{prefix}/{result.Value.UserId}", result.Value);
             })
             .WithName("UpdateUser")
             .RequirePermission(AppPermissions.UserManagement.Update);

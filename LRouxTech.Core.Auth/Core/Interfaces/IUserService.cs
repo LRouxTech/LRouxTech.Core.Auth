@@ -11,8 +11,8 @@ public interface IUserService
 {
     Task<Result<SignedInUserResponse>> Login(UserLoginRequest request);
     Task<Result<bool>> Logout(UserLogoutRequest request);
-    Task<Result<User>> Create(CreateUserRequest request);
-    Task<Result<User>> Update(UpdateUserRequest request);
+    Task<Result<UserDetailResponse>> Create(CreateUserRequest request);
+    Task<Result<UserDetailResponse>> Update(UpdateUserRequest request);
     Task<Result<SignedInUserResponse>> Authenticate(AuthenticateUserRequest request);
     Task<Result<PagedList<ListUser>>> GetUserList(PagedRequest request);
     Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request);

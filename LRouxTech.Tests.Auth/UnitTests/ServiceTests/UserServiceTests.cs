@@ -107,8 +107,8 @@ public class UserServiceTests : IAsyncLifetime
         result.Value.UserName.Should().Be(username);
         result.Value.Email.Should().Be(email);
         
-        result.Value.UserRoles.Should().NotBeNullOrEmpty();
-        result.Value.UserPermissions.Should().NotBeNullOrEmpty();
+        result.Value.Roles.Should().NotBeNullOrEmpty();
+        result.Value.Permissions.Should().NotBeNullOrEmpty();
     }
     
     [Theory]
@@ -146,8 +146,8 @@ public class UserServiceTests : IAsyncLifetime
         result.Value.UserName.Should().Be(username);
         result.Value.Email.Should().Be(email);
         
-        result.Value.UserRoles.Should().NotBeNullOrEmpty();
-        result.Value.UserPermissions.Should().NotBeNullOrEmpty();
+        result.Value.Roles.Should().NotBeNullOrEmpty();
+        result.Value.Permissions.Should().NotBeNullOrEmpty();
     }
     
     [Theory]

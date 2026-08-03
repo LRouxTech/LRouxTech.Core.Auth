@@ -2,6 +2,8 @@
 
 public record UserDetailResponse(
     Guid UserId,
+    string Name,
+    string Surname,
     string UserName,
     string Email,
     List<Guid> Roles,

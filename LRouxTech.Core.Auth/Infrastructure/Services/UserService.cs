@@ -77,7 +77,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         return true;
     }
 
-    public async Task<Result<User>> Create(CreateUserRequest request)
+    public async Task<Result<UserDetailResponse>> Create(CreateUserRequest request)
     { 
         var validationResult = userValidator.ValidateUserCreation(request);
         if (validationResult.IsFailure)
@@ -104,7 +104,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         
         user = await dbContext.Users
             .Include(x => x.UserPermissions)
-            .Include(x => x.UserRoles)
+            .Include(x => x.UserRoles).ThenInclude(userRole => userRole.Role).ThenInclude(role => role.RolePermissions)
             .FirstOrDefaultAsync(x => x.Id == user.Id);
 
         if (user == null)
@@ -129,12 +129,18 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         
         await emailService.SendEmailAsync(user.Email, "Reset Your Password", htmlTemplate);
         
-
-        
-        return user;
+        return  new UserDetailResponse(
+            user.Id, 
+            user.Name,
+            user.Surname ?? "",
+            user.UserName, 
+            user.Email,
+            user.UserRoles.Select(x => x.RoleId).ToList(),
+            user.UserPermissions.Select(x => x.PermissionId).Concat(user.UserRoles.SelectMany(x => x.Role.RolePermissions).Select(x => x.PermissionId)).Distinct().ToList()
+        );
     }
 
-    public async Task<Result<User>> Update(UpdateUserRequest request)
+    public async Task<Result<UserDetailResponse>> Update(UpdateUserRequest request)
     {
         var validationResult = userValidator.ValidateUserUpdate(request);
         if (validationResult.IsFailure)
@@ -144,6 +150,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var user = await dbContext.Users.Include(x => x.UserPermissions).Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions)
             .FirstOrDefaultAsync(x => x.Id == request.UserId);
         if (user == null)
         {
@@ -185,7 +192,21 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
 
         dbContext.Users.Update(user);
         await dbContext.SaveChangesAsync();
-        return user;
+        return  new UserDetailResponse(
+            user.Id, 
+            user.Name,
+            user.Surname ?? "",
+            user.UserName, 
+            user.Email,
+            user.UserRoles.Select(x => x.RoleId).ToList(),
+            user.UserPermissions.Select(x => x.PermissionId).Concat(
+                user.UserRoles?
+                    .Where(ur => ur.Role != null)
+                    .SelectMany(ur => ur.Role.RolePermissions ?? Enumerable.Empty<RolePermission>())
+                    .Select(rp => rp.PermissionId) 
+                ?? []
+            ).Distinct().ToList()
+        );
     }
 
     public async Task<Result<SignedInUserResponse>> Authenticate(AuthenticateUserRequest request)
@@ -245,6 +266,8 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
 
         return  new UserDetailResponse(
             user.Id, 
+            user.Name,
+            user.Surname ?? "",
             user.UserName, 
             user.Email,
             user.UserRoles.Select(x => x.RoleId).ToList(),
