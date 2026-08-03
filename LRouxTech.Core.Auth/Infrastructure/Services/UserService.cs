@@ -213,7 +213,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            query = query.Where(x => x.Name.Contains(request.Search) || x.UserName.Contains(request.Search) || x.Email.Contains(request.Search));
+            query = query.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()) || x.UserName.ToLower().Contains(request.Search.ToLower()) || x.Email.ToLower().Contains(request.Search.ToLower()));
         }
 
         var totalCount = await query.CountAsync();
