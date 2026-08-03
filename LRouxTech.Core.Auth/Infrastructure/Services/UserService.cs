@@ -211,6 +211,11 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var query = dbContext.Users.AsNoTracking();
 
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            query = query.Where(x => x.Name.Contains(request.Search) || x.UserName.Contains(request.Search) || x.Email.Contains(request.Search));
+        }
+
         var totalCount = await query.CountAsync();
         
         var items = await query
