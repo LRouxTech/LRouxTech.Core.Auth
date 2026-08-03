@@ -198,12 +198,13 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
 
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var token = tokenResponse.Value;
-        var permissions = await dbContext.UserPermissions.Where(x => x.UserId == token.UserId)
-            .Select(x => x.PermissionId).ToListAsync();
-        var roles = await dbContext.UserPermissions.Where(x => x.UserId == token.UserId).Select(x => x.PermissionId)
-            .ToListAsync();
+        var user = await dbContext.Users
+            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.UtcNow))
+            .Include(x => x.UserPermissions)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions)
+            .FirstOrDefaultAsync(x => x.Id == token.UserId);
         return new SignedInUserResponse(token.UserId, token.User.UserName, token.User.Email, token.TokenValue,
-            token.ExpiresOn, roles, permissions);
+            token.ExpiresOn, user.UserRoles.Select(x => x.RoleId).ToList(), user.UserPermissions.Select(x => x.PermissionId).Concat(user.UserRoles.SelectMany(x => x.Role.RolePermissions).Select(x => x.PermissionId)).Distinct().ToList());
     }
 
     public async Task<Result<PagedList<ListUser>>> GetUserList(PagedRequest request)
@@ -231,8 +232,10 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
     public async Task<Result<UserDetailResponse>> GetUser(UserDetailRequest request)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var user = await dbContext.Users.Select(x => new {x.Id, x.UserName, x.Email,
-            UserRoles = x.UserRoles.Select(y => y.RoleId), Permissions = x.UserPermissions.Select(y => y.PermissionId)})
+        var user = await dbContext.Users
+            .Include(x => x.UserTokens.Where(x => !x.Expired && x.ExpiresOn > DateTime.UtcNow))
+            .Include(x => x.UserPermissions)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role).ThenInclude(x => x.RolePermissions)
             .FirstOrDefaultAsync(x => x.Id == request.UserId);
 
         if (user == null)
@@ -244,8 +247,8 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             user.Id, 
             user.UserName, 
             user.Email,
-            user.UserRoles.ToList(),
-            user.Permissions.ToList()
+            user.UserRoles.Select(x => x.RoleId).ToList(),
+            user.UserPermissions.Select(x => x.PermissionId).Concat(user.UserRoles.SelectMany(x => x.Role.RolePermissions).Select(x => x.PermissionId)).Distinct().ToList()
         );
     }
 
