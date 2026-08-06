@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>LRouxTech.Sample.Auth</RootNamespace>
+        <UserSecretsId>4e35b34e-2cf8-458c-97fa-d59bc1511f6a</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

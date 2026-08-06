@@ -2,6 +2,7 @@ using LRouxTech.Core.Auth.Api.Authorization;
 using LRouxTech.Core.Auth.Api.Endpoints;
 using LRouxTech.Core.Auth.Api.Extensions;
 using LRouxTech.Core.Auth.Infrastructure.Database;
+using LRouxTech.Core.Mail;
 using LRouxTech.Sample.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -36,6 +37,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddAuthModule();
 builder.Services.AddCustomPermissions<LocalPermissions>();
+builder.Services.AddEmailInfrastructure(builder.Configuration);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
