@@ -358,7 +358,7 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
 
         var placeholders = new Dictionary<string, string>
         {
-            { "ResetLink", $"https://{_emailSettings.Domain}/auth/reset-password?token={newToken}" },
+            { "ResetLink", $"https://{_emailSettings.Domain}/auth/reset-password?token={newToken.Value.TokenValue}" },
         };
         
         string htmlTemplate = LoadTemplate.RenderTemplate("ResetPassword.html", placeholders);
