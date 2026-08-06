@@ -12,12 +12,15 @@ using LRouxTech.Core.Auth.Infrastructure.Validator;
 using LRouxTech.Core.Mail;
 using LRouxTech.Core.ValidationResult;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace LRouxTech.Core.Auth.Infrastructure.Services;
 
-public class UserService(IUserDbContextFactory dbContextFactory, ITokenService tokenService, IUserValidator userValidator, IEmailService emailService)
+public class UserService(IUserDbContextFactory dbContextFactory, ITokenService tokenService, IUserValidator userValidator, IEmailService emailService, IOptions<EmailSettings> emailOptions)
     : IUserService
 {
+    private readonly EmailSettings _emailSettings = emailOptions.Value;
+    
     public async Task<Result<SignedInUserResponse>> Login(UserLoginRequest request)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -118,11 +121,9 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             return tokenResult.Error;
         }
         
-        // Replace with appsettings
-        string domain = "";
         var placeholders = new Dictionary<string, string>
         {
-            { "ResetLink", $"https://{domain}/auth/reset-password?token={tokenResult.Value.TokenValue}" },
+            { "ResetLink", $"https://{_emailSettings.Domain}/auth/reset-password?token={tokenResult.Value.TokenValue}" },
         };
         
         string htmlTemplate = LoadTemplate.RenderTemplate("WelcomeMail.html", placeholders);
@@ -355,12 +356,9 @@ public class UserService(IUserDbContextFactory dbContextFactory, ITokenService t
             return newToken.Error;
         }
 
-        // Replace with appsettings
-        string domain = "";
-        
         var placeholders = new Dictionary<string, string>
         {
-            { "ResetLink", $"https://{domain}/auth/reset-password?token={newToken}" },
+            { "ResetLink", $"https://{_emailSettings.Domain}/auth/reset-password?token={newToken}" },
         };
         
         string htmlTemplate = LoadTemplate.RenderTemplate("ResetPassword.html", placeholders);

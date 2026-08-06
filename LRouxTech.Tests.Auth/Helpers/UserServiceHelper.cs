@@ -5,6 +5,7 @@ using LRouxTech.Core.Auth.Infrastructure.Validator;
 using LRouxTech.Tests.Auth.TestData.Setup;
 using LRouxTech.Core.Mail;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 
@@ -14,8 +15,14 @@ public class UserServiceHelper
 {
     public static IUserService CreateUserService(IUserDbContextFactory factory)
     {
+        var emailSettings = Options.Create(new EmailSettings
+        {
+            SmtpServer = "localhost",
+            Port = 25,
+        });
+        
         return new UserService(factory,
             new TokenService(factory, ConfigurationMockHelper.CreateConfigurationMock().Object), new UserValidator(),
-            EmailMockHelper.EmailMock().Object);
+            EmailMockHelper.EmailMock().Object, emailSettings);
     }
 }

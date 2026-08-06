@@ -14,6 +14,9 @@ builder.Configuration
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
 builder.Services.AddScoped<IUserDbContextFactory, UserDbContextFactory>();
 
 if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("testdb")))
