@@ -1,4 +1,6 @@
-﻿namespace LRouxTech.Core.Auth.Infrastructure.Paged;
+﻿using System.Text.Json.Serialization;
+
+namespace LRouxTech.Core.Auth.Infrastructure.Paged;
 
 public class PagedList<T>
 {
@@ -9,11 +11,14 @@ public class PagedList<T>
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
     public bool HasPreviousPage => PageIndex > 1;
     public bool HasNextPage => PageIndex < TotalPages;
+    
+    public PagedList() { }
 
-    public PagedList(List<T> items, int count, int pageIndex, int pageSize)
+    [JsonConstructor]
+    public PagedList(List<T> items, int totalCount, int pageIndex, int pageSize)
     {
         Items = items;
-        TotalCount = count;
+        TotalCount = totalCount;
         PageIndex = pageIndex;
         PageSize = pageSize;
     }
