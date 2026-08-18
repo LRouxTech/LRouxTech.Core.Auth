@@ -1,4 +1,4 @@
-![LRouxTech.Core.Auth](https://github.com/user-attachments/assets/4bb06532-0dcb-4aa4-b87b-8444a7333cec)
+![LRouxTech.Core.Auth](https://github.com/user-attachments/assets/31c2177b-7d1c-44a4-87b8-ec35ba8e37c0)
 
 The Core auth package is a NuGet package that can be consumed for a quick auth setup. It handles the creation of the permissions specified, and handles login, logout and password change requests.
 
